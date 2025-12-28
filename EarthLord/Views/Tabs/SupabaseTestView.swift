@@ -8,11 +8,7 @@
 import SwiftUI
 import Supabase
 
-// 在 View 外部定义 SupabaseClient 实例
-let supabase = SupabaseClient(
-    supabaseURL: URL(string: "https://bilzmsorvemxztftlzsp.supabase.co")!,
-    supabaseKey: "sb_publishable_iWLwQZdW9oHxLasB-f-Tpw_I0lLRqLV"
-)
+// supabase 客户端定义在 Services/SupabaseConfig.swift
 
 struct SupabaseTestView: View {
     @State private var connectionStatus: ConnectionStatus = .idle
