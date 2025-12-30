@@ -9,6 +9,9 @@ import SwiftUI
 
 /// 启动页视图
 struct SplashView: View {
+    /// 认证管理器
+    @EnvironmentObject var authManager: AuthManager
+
     /// 是否显示加载动画
     @State private var isAnimating = false
 
@@ -20,6 +23,9 @@ struct SplashView: View {
 
     /// Logo 透明度
     @State private var logoOpacity: Double = 0
+
+    /// 最小显示时间是否已过
+    @State private var minimumTimeElapsed = false
 
     /// 是否完成加载
     @Binding var isFinished: Bool
@@ -129,7 +135,14 @@ struct SplashView: View {
         }
         .onAppear {
             startAnimations()
-            simulateLoading()
+            startLoading()
+        }
+        // 监听认证初始化状态
+        .onChange(of: authManager.isInitialized) { _, initialized in
+            if initialized {
+                loadingText = "准备就绪"
+                checkAndFinish()
+            }
         }
     }
 
@@ -148,20 +161,25 @@ struct SplashView: View {
         }
     }
 
-    // MARK: - 模拟加载
+    // MARK: - 加载流程
 
-    private func simulateLoading() {
-        // 模拟加载过程
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            loadingText = "正在加载资源..."
+    private func startLoading() {
+        // 更新加载文字
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            loadingText = "正在检查登录状态..."
         }
 
+        // 设置最小显示时间（确保启动页至少显示 2 秒）
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-            loadingText = "准备就绪"
+            minimumTimeElapsed = true
+            checkAndFinish()
         }
+    }
 
-        // 完成加载，进入主界面
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+    /// 检查是否可以结束启动页
+    private func checkAndFinish() {
+        // 必须同时满足：最小时间已过 + 认证状态已初始化
+        if minimumTimeElapsed && authManager.isInitialized {
             withAnimation(.easeInOut(duration: 0.3)) {
                 isFinished = true
             }
@@ -171,4 +189,5 @@ struct SplashView: View {
 
 #Preview {
     SplashView(isFinished: .constant(false))
+        .environmentObject(AuthManager())
 }

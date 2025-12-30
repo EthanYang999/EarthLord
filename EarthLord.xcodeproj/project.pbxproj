@@ -7,16 +7,33 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA06ED7C2F041D8D00804899 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AA06ED7B2F041D8D00804899 /* Localizable.xcstrings */; };
+		AA9F907B2F0366F200130230 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AA9F907A2F0366F200130230 /* GoogleSignIn */; };
+		AA9F907D2F0366F200130230 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AA9F907C2F0366F200130230 /* GoogleSignInSwift */; };
 		AACE01172EFE5FEA00AA9A99 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = AACE01162EFE5FEA00AA9A99 /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AA06ED7B2F041D8D00804899 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		AA516E7F2EFAC01500B02FDD /* EarthLord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EarthLord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		AA9F907F2F0367E200130230 /* Exceptions for "EarthLord" folder in "EarthLord" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AA516E7E2EFAC01500B02FDD /* EarthLord */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		AA516E812EFAC01500B02FDD /* EarthLord */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AA9F907F2F0367E200130230 /* Exceptions for "EarthLord" folder in "EarthLord" target */,
+			);
 			path = EarthLord;
 			sourceTree = "<group>";
 		};
@@ -27,7 +44,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA9F907D2F0366F200130230 /* GoogleSignInSwift in Frameworks */,
 				AACE01172EFE5FEA00AA9A99 /* Supabase in Frameworks */,
+				AA9F907B2F0366F200130230 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -37,6 +56,7 @@
 		AA516E762EFAC01500B02FDD = {
 			isa = PBXGroup;
 			children = (
+				AA06ED7B2F041D8D00804899 /* Localizable.xcstrings */,
 				AA516E812EFAC01500B02FDD /* EarthLord */,
 				AA9714132EFECEA900F3CA27 /* Frameworks */,
 				AA516E802EFAC01500B02FDD /* Products */,
@@ -79,6 +99,8 @@
 			name = EarthLord;
 			packageProductDependencies = (
 				AACE01162EFE5FEA00AA9A99 /* Supabase */,
+				AA9F907A2F0366F200130230 /* GoogleSignIn */,
+				AA9F907C2F0366F200130230 /* GoogleSignInSwift */,
 			);
 			productName = EarthLord;
 			productReference = AA516E7F2EFAC01500B02FDD /* EarthLord.app */;
@@ -100,16 +122,18 @@
 				};
 			};
 			buildConfigurationList = AA516E7A2EFAC01500B02FDD /* Build configuration list for PBXProject "EarthLord" */;
-			developmentRegion = en;
+			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = AA516E762EFAC01500B02FDD;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				AACE01152EFE5FEA00AA9A99 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				AA9F90792F0366F200130230 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AA516E802EFAC01500B02FDD /* Products */;
@@ -126,6 +150,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA06ED7C2F041D8D00804899 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,6 +227,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -259,6 +285,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -273,6 +300,7 @@
 				DEVELOPMENT_TEAM = 7UDUX5663M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EarthLord/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -305,6 +333,7 @@
 				DEVELOPMENT_TEAM = 7UDUX5663M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EarthLord/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -351,6 +380,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		AA9F90792F0366F200130230 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 		AACE01152EFE5FEA00AA9A99 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/supabase/supabase-swift";
@@ -362,6 +399,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		AA9F907A2F0366F200130230 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA9F90792F0366F200130230 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		AA9F907C2F0366F200130230 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA9F90792F0366F200130230 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
 		AACE01162EFE5FEA00AA9A99 /* Supabase */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = AACE01152EFE5FEA00AA9A99 /* XCRemoteSwiftPackageReference "supabase-swift" */;

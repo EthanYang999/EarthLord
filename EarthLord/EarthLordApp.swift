@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import GoogleSignIn
 
 @main
 struct EarthLordApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .onOpenURL { url in
+                    // 处理 Google Sign-In 回调
+                    GIDSignIn.sharedInstance.handle(url)
+                }
         }
     }
 }
