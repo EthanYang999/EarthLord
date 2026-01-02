@@ -10,6 +10,7 @@ import Supabase
 
 struct MoreTabView: View {
     @EnvironmentObject var authManager: AuthManager
+    @ObservedObject var languageManager = LanguageManager.shared
 
     /// 是否显示退出确认弹窗
     @State private var showSignOutAlert = false
@@ -34,6 +35,20 @@ struct MoreTabView: View {
                             }
                         }
                         .padding(.vertical, 8)
+                    }
+                }
+
+                // 设置
+                Section("设置") {
+                    NavigationLink {
+                        LanguageSettingsView()
+                    } label: {
+                        HStack {
+                            Label("语言", systemImage: "globe")
+                            Spacer()
+                            Text(languageManager.selectedLanguage.displayName)
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
 

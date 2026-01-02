@@ -5,7 +5,14 @@
 
     },
     "%lld" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
     },
     "EARTH LORD" : {
       "localizations" : {
@@ -42,7 +49,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passwords don't match"
+            "value" : "Passwords do not match"
           }
         }
       }
@@ -102,7 +109,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Survivors"
+            "value" : "Survivor"
           }
         }
       }
@@ -112,7 +119,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Survivor Files"
+            "value" : "Survivor Profile"
           }
         }
       }
@@ -132,7 +139,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conquer the world, one step at a time"
+            "value" : "Conquer the world, starting from your feet"
           }
         }
       }
@@ -142,7 +149,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Forgot password?"
+            "value" : "Forgot Password?"
           }
         }
       }
@@ -192,7 +199,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This cannot be undone! All your data will be permanently deleted.\n\nType DELETE to confirm."
+            "value" : "This action is irreversible! All your data will be permanently deleted.\n\nPlease type DELETE to confirm."
           }
         }
       }
@@ -212,7 +219,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Delete Forever"
+            "value" : "Delete Permanently"
           }
         }
       }
@@ -242,7 +249,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Are you sure you want to sign out?"
+            "value" : "Are you sure you want to log out?"
           }
         }
       }
@@ -252,7 +259,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sign Out"
+            "value" : "Confirm Logout"
           }
         }
       }
@@ -267,6 +274,16 @@
         }
       }
     },
+    "设置" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
     "设置密码" : {
       "localizations" : {
         "en" : {
@@ -277,12 +294,22 @@
         }
       }
     },
+    "语言" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        }
+      }
+    },
     "请设置您的登录密码" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Please set your password"
+            "value" : "Please set your login password"
           }
         }
       }
@@ -302,7 +329,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Type DELETE"
+            "value" : "Enter DELETE"
           }
         }
       }
@@ -312,7 +339,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enter your registered email"
+            "value" : "Enter the email used for registration"
           }
         }
       }
@@ -342,7 +369,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enter code"
+            "value" : "Enter verification code"
           }
         }
       }
@@ -352,7 +379,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Branch universe test page"
+            "value" : "This is a test page for branch universe"
           }
         }
       }
@@ -362,7 +389,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sign Out"
+            "value" : "Log Out"
           }
         }
       }
@@ -372,7 +399,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sign Out"
+            "value" : "Log Out"
           }
         }
       }
@@ -412,7 +439,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resend Code"
+            "value" : "Resend Verification Code"
           }
         }
       }
@@ -432,11 +459,61 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Code sent to %@"
+            "value" : "Verification code sent to %@"
+          }
+        }
+      }
+    },
+    "资源点" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resources"
+          }
+        }
+      }
+    },
+    "探索距离" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Distance"
+          }
+        }
+      }
+    },
+    "通知" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
+      }
+    },
+    "帮助" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help"
+          }
+        }
+      }
+    },
+    "关于" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version" : "1.1"
 }

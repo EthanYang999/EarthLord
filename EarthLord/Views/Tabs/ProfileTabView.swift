@@ -141,7 +141,7 @@ struct ProfileTabView: View {
         .cornerRadius(16)
     }
 
-    private func statItem(value: String, label: String, icon: String) -> some View {
+    private func statItem(value: String, label: LocalizedStringKey, icon: String) -> some View {
         VStack(spacing: 8) {
             Image(systemName: icon)
                 .font(.title2)
@@ -174,7 +174,7 @@ struct ProfileTabView: View {
         .cornerRadius(16)
     }
 
-    private func menuItem(icon: String, title: String, color: Color) -> some View {
+    private func menuItem(icon: String, title: LocalizedStringKey, color: Color) -> some View {
         HStack {
             Image(systemName: icon)
                 .font(.title3)

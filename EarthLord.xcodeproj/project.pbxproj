@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AA06ED7C2F041D8D00804899 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AA06ED7B2F041D8D00804899 /* Localizable.xcstrings */; };
+		AA06ED832F04270000804899 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = AA06ED822F04270000804899 /* Localizable.xcstrings */; };
 		AA9F907B2F0366F200130230 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AA9F907A2F0366F200130230 /* GoogleSignIn */; };
 		AA9F907D2F0366F200130230 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AA9F907C2F0366F200130230 /* GoogleSignInSwift */; };
 		AACE01172EFE5FEA00AA9A99 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = AACE01162EFE5FEA00AA9A99 /* Supabase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		AA06ED7B2F041D8D00804899 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		AA06ED822F04270000804899 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		AA516E7F2EFAC01500B02FDD /* EarthLord.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EarthLord.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -56,7 +56,7 @@
 		AA516E762EFAC01500B02FDD = {
 			isa = PBXGroup;
 			children = (
-				AA06ED7B2F041D8D00804899 /* Localizable.xcstrings */,
+				AA06ED822F04270000804899 /* Localizable.xcstrings */,
 				AA516E812EFAC01500B02FDD /* EarthLord */,
 				AA9714132EFECEA900F3CA27 /* Frameworks */,
 				AA516E802EFAC01500B02FDD /* Products */,
@@ -150,7 +150,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA06ED7C2F041D8D00804899 /* Localizable.xcstrings in Resources */,
+				AA06ED832F04270000804899 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
