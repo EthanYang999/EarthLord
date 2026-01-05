@@ -2,14 +2,14 @@
 //  MapViewRepresentable.swift
 //  EarthLord
 //
-//  MKMapView 的 SwiftUI 包装器 - 显示末世风格地图
+//  MKMapView 的 SwiftUI 包装器 - 显示末世风格地图和路径轨迹
 //
 
 import SwiftUI
 import MapKit
 
 /// MKMapView 的 SwiftUI 包装器
-/// 显示卫星混合地图，应用末世滤镜效果，处理用户位置显示和地图居中
+/// 显示卫星混合地图，应用末世滤镜效果，处理用户位置显示、地图居中和路径轨迹渲染
 struct MapViewRepresentable: UIViewRepresentable {
 
     // MARK: - Bindings
@@ -19,6 +19,17 @@ struct MapViewRepresentable: UIViewRepresentable {
 
     /// 是否已完成首次定位（防止重复居中）
     @Binding var hasLocatedUser: Bool
+
+    /// 路径坐标数组（WGS-84 原始坐标）
+    @Binding var trackingPath: [CLLocationCoordinate2D]
+
+    // MARK: - Properties
+
+    /// 路径更新版本号（触发轨迹重绘）
+    var pathUpdateVersion: Int
+
+    /// 是否正在追踪
+    var isTracking: Bool
 
     // MARK: - UIViewRepresentable
 
@@ -44,41 +55,21 @@ struct MapViewRepresentable: UIViewRepresentable {
         mapView.isRotateEnabled = true    // 允许旋转
         mapView.isPitchEnabled = true     // 允许倾斜
 
-        // 设置代理（关键！否则 didUpdate userLocation 不会被调用）
+        // 设置代理（关键！否则 didUpdate userLocation 和 rendererFor 不会被调用）
         mapView.delegate = context.coordinator
-
-        // 应用末世滤镜效果
-        applyApocalypseFilter(to: mapView)
 
         return mapView
     }
 
     /// 更新 MKMapView（SwiftUI 状态变化时调用）
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        // 空实现：地图居中由 Coordinator 的 delegate 方法处理
+        // 更新轨迹显示
+        context.coordinator.updateTrackingPath(on: uiView, with: trackingPath)
     }
 
     /// 创建 Coordinator
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
-    }
-
-    // MARK: - Private Methods
-
-    /// 应用末世滤镜效果
-    /// 降低饱和度 + 添加棕褐色调，营造废土氛围
-    private func applyApocalypseFilter(to mapView: MKMapView) {
-        // 色调控制：降低饱和度和亮度
-        guard let colorControls = CIFilter(name: "CIColorControls") else { return }
-        colorControls.setValue(-0.15, forKey: kCIInputBrightnessKey)  // 稍微变暗
-        colorControls.setValue(0.5, forKey: kCIInputSaturationKey)    // 降低饱和度
-
-        // 棕褐色调：废土的泛黄效果
-        guard let sepiaFilter = CIFilter(name: "CISepiaTone") else { return }
-        sepiaFilter.setValue(0.65, forKey: kCIInputIntensityKey)
-
-        // 应用到地图图层
-        mapView.layer.filters = [colorControls, sepiaFilter]
     }
 
     // MARK: - Coordinator
@@ -92,8 +83,51 @@ struct MapViewRepresentable: UIViewRepresentable {
         /// 是否已完成首次居中（防止重复居中）
         private var hasInitialCentered = false
 
+        /// 当前显示的轨迹线（用于更新时移除旧轨迹）
+        private var currentPolyline: MKPolyline?
+
+        /// 上次更新的路径版本号（避免重复绘制）
+        private var lastPathVersion: Int = -1
+
         init(_ parent: MapViewRepresentable) {
             self.parent = parent
+        }
+
+        // MARK: - 轨迹更新方法
+
+        /// 更新轨迹显示
+        /// - Parameters:
+        ///   - mapView: 地图视图
+        ///   - path: WGS-84 坐标数组
+        func updateTrackingPath(on mapView: MKMapView, with path: [CLLocationCoordinate2D]) {
+            // 检查是否需要更新（通过版本号判断）
+            guard parent.pathUpdateVersion != lastPathVersion else { return }
+            lastPathVersion = parent.pathUpdateVersion
+
+            // 移除旧的轨迹线
+            if let oldPolyline = currentPolyline {
+                mapView.removeOverlay(oldPolyline)
+                currentPolyline = nil
+            }
+
+            // 如果路径少于 2 个点，无法绘制线条
+            guard path.count >= 2 else {
+                print("📍 路径点不足，暂不绘制轨迹")
+                return
+            }
+
+            // 关键：将 WGS-84 坐标转换为 GCJ-02 坐标
+            // 这样轨迹才会显示在正确的位置，不会偏移 100-500 米
+            let gcj02Coordinates = CoordinateConverter.wgs84ToGcj02Array(path)
+
+            // 创建新的轨迹线
+            let polyline = MKPolyline(coordinates: gcj02Coordinates, count: gcj02Coordinates.count)
+
+            // 添加到地图
+            mapView.addOverlay(polyline)
+            currentPolyline = polyline
+
+            print("🗺️ 轨迹已更新，共 \(path.count) 个点")
         }
 
         // MARK: - MKMapViewDelegate
@@ -131,6 +165,29 @@ struct MapViewRepresentable: UIViewRepresentable {
             }
         }
 
+        /// 轨迹渲染器回调（关键方法！没有这个方法轨迹不会显示！）
+        /// - Parameters:
+        ///   - mapView: 地图视图
+        ///   - overlay: 覆盖层对象
+        /// - Returns: 渲染器
+        func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            // 处理轨迹线
+            if let polyline = overlay as? MKPolyline {
+                let renderer = MKPolylineRenderer(polyline: polyline)
+
+                // 设置轨迹样式
+                renderer.strokeColor = UIColor.cyan      // 青色轨迹
+                renderer.lineWidth = 5                   // 线宽 5pt
+                renderer.lineCap = .round                // 圆头线帽
+                renderer.lineJoin = .round               // 圆角连接
+
+                return renderer
+            }
+
+            // 默认渲染器
+            return MKOverlayRenderer(overlay: overlay)
+        }
+
         /// 地图区域变化回调
         func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
             // 可用于追踪用户手动拖动地图
@@ -141,4 +198,16 @@ struct MapViewRepresentable: UIViewRepresentable {
             // 地图瓦片加载完成
         }
     }
+}
+
+// MARK: - Preview
+
+#Preview {
+    MapViewRepresentable(
+        userLocation: .constant(nil),
+        hasLocatedUser: .constant(false),
+        trackingPath: .constant([]),
+        pathUpdateVersion: 0,
+        isTracking: false
+    )
 }
