@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import Supabase
 
 struct MapTabView: View {
 
@@ -15,8 +16,14 @@ struct MapTabView: View {
     /// 定位管理器（从环境对象获取）
     @EnvironmentObject var locationManager: LocationManager
 
+    /// 认证管理器（用于获取当前用户 ID）
+    @EnvironmentObject var authManager: AuthManager
+
     /// 领地管理器
     private let territoryManager = TerritoryManager.shared
+
+    /// 已加载的领地数据
+    @State private var territories: [Territory] = []
 
     /// 用户位置坐标
     @State private var userLocation: CLLocationCoordinate2D?
@@ -46,14 +53,16 @@ struct MapTabView: View {
 
     var body: some View {
         ZStack {
-            // 地图视图（包含轨迹渲染）
+            // 地图视图（包含轨迹渲染和领地显示）
             MapViewRepresentable(
                 userLocation: $userLocation,
                 hasLocatedUser: $hasLocatedUser,
                 trackingPath: $locationManager.pathCoordinates,
                 pathUpdateVersion: locationManager.pathUpdateVersion,
                 isTracking: locationManager.isTracking,
-                isPathClosed: locationManager.isPathClosed
+                isPathClosed: locationManager.isPathClosed,
+                territories: territories,
+                currentUserId: authManager.currentUser?.id.uuidString
             )
             .ignoresSafeArea()
 
@@ -126,6 +135,11 @@ struct MapTabView: View {
         .onAppear {
             // 页面出现时检查并请求权限
             locationManager.checkAndRequestPermission()
+
+            // 加载已保存的领地
+            Task {
+                await loadTerritories()
+            }
         }
         // 监听速度警告变化
         .onReceive(locationManager.$speedWarning) { warning in
@@ -428,6 +442,9 @@ struct MapTabView: View {
             // ⚠️ 上传成功后停止追踪（会重置所有状态）
             locationManager.stopPathTracking()
 
+            // 刷新领地列表，显示刚上传的领地
+            await loadTerritories()
+
             showUploadSuccess("领地登记成功！面积: \(Int(area))m²")
 
         } catch {
@@ -471,9 +488,24 @@ struct MapTabView: View {
         }
     }
 
+    // MARK: - 领地加载方法
+
+    /// 从数据库加载所有领地
+    private func loadTerritories() async {
+        do {
+            let loadedTerritories = try await territoryManager.loadAllTerritories()
+            await MainActor.run {
+                self.territories = loadedTerritories
+            }
+            TerritoryLogger.shared.log("加载了 \(loadedTerritories.count) 个领地", type: .info)
+        } catch {
+            TerritoryLogger.shared.log("加载领地失败: \(error.localizedDescription)", type: .error)
+        }
+    }
 }
 
 #Preview {
     MapTabView()
         .environmentObject(LocationManager())
+        .environmentObject(AuthManager())
 }
