@@ -63,6 +63,9 @@ struct MapViewRepresentable: UIViewRepresentable {
 
     /// 更新 MKMapView（SwiftUI 状态变化时调用）
     func updateUIView(_ uiView: MKMapView, context: Context) {
+        // 关键：更新 Coordinator 的 parent 引用，否则版本号检查会用旧值
+        context.coordinator.parent = self
+
         // 更新轨迹显示
         context.coordinator.updateTrackingPath(on: uiView, with: trackingPath)
     }
