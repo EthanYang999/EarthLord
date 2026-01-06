@@ -24,8 +24,8 @@ struct MapTabView: View {
     /// 是否显示速度警告
     @State private var showSpeedWarning = false
 
-    /// 是否显示闭环成功横幅
-    @State private var showClosureBanner = false
+    /// 是否显示验证结果横幅（闭环后的验证结果）
+    @State private var showValidationBanner = false
 
     // MARK: - Body
 
@@ -55,16 +55,16 @@ struct MapTabView: View {
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
 
-                // 闭环成功横幅
-                if showClosureBanner {
-                    closureSuccessBanner
+                // 验证结果横幅（成功/失败）
+                if showValidationBanner {
+                    validationResultBanner
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
 
                 Spacer()
             }
             .animation(.easeInOut(duration: 0.3), value: showSpeedWarning)
-            .animation(.easeInOut(duration: 0.3), value: showClosureBanner)
+            .animation(.easeInOut(duration: 0.3), value: showValidationBanner)
 
             // 按钮层
             VStack {
@@ -113,16 +113,19 @@ struct MapTabView: View {
                 }
             }
         }
-        // 监听闭环状态变化
+        // 监听闭环状态，闭环后根据验证结果显示横幅
         .onReceive(locationManager.$isPathClosed) { isClosed in
             if isClosed {
-                withAnimation {
-                    showClosureBanner = true
-                }
-                // 3 秒后自动隐藏
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                // 闭环后延迟一点点，等待验证结果
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     withAnimation {
-                        showClosureBanner = false
+                        showValidationBanner = true
+                    }
+                    // 3 秒后自动隐藏
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        withAnimation {
+                            showValidationBanner = false
+                        }
                     }
                 }
             }
@@ -293,21 +296,29 @@ struct MapTabView: View {
         .padding(.top, 50)  // 避开状态栏
     }
 
-    /// 闭环成功横幅
-    private var closureSuccessBanner: some View {
+    /// 验证结果横幅（根据验证结果显示成功或失败）
+    private var validationResultBanner: some View {
         HStack(spacing: 8) {
-            Image(systemName: "checkmark.circle.fill")
+            Image(systemName: locationManager.territoryValidationPassed
+                  ? "checkmark.circle.fill"
+                  : "xmark.circle.fill")
                 .font(.body)
 
-            Text("圈地成功！领地已标记")
-                .font(.subheadline)
-                .fontWeight(.medium)
+            if locationManager.territoryValidationPassed {
+                Text("圈地成功！领地面积: \(String(format: "%.0f", locationManager.calculatedArea))m²")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+            } else {
+                Text(locationManager.territoryValidationError ?? "验证失败")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+            }
         }
         .foregroundColor(.white)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity)
-        .background(Color.green)
+        .background(locationManager.territoryValidationPassed ? Color.green : Color.red)
         .padding(.top, 50)  // 避开状态栏
     }
 }
