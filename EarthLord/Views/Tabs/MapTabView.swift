@@ -12,14 +12,20 @@ struct MapTabView: View {
 
     // MARK: - State
 
-    /// 定位管理器
-    @StateObject private var locationManager = LocationManager()
+    /// 定位管理器（从环境对象获取）
+    @EnvironmentObject var locationManager: LocationManager
 
     /// 用户位置坐标
     @State private var userLocation: CLLocationCoordinate2D?
 
     /// 是否已完成首次定位
     @State private var hasLocatedUser = false
+
+    /// 是否显示速度警告
+    @State private var showSpeedWarning = false
+
+    /// 是否显示闭环成功横幅
+    @State private var showClosureBanner = false
 
     // MARK: - Body
 
@@ -31,7 +37,8 @@ struct MapTabView: View {
                 hasLocatedUser: $hasLocatedUser,
                 trackingPath: $locationManager.pathCoordinates,
                 pathUpdateVersion: locationManager.pathUpdateVersion,
-                isTracking: locationManager.isTracking
+                isTracking: locationManager.isTracking,
+                isPathClosed: locationManager.isPathClosed
             )
             .ignoresSafeArea()
 
@@ -39,6 +46,25 @@ struct MapTabView: View {
             if locationManager.isDenied {
                 permissionDeniedView
             }
+
+            // 顶部横幅层（速度警告 / 闭环成功）
+            VStack {
+                // 速度警告横幅
+                if showSpeedWarning, let warning = locationManager.speedWarning {
+                    speedWarningBanner(message: warning)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+
+                // 闭环成功横幅
+                if showClosureBanner {
+                    closureSuccessBanner
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+
+                Spacer()
+            }
+            .animation(.easeInOut(duration: 0.3), value: showSpeedWarning)
+            .animation(.easeInOut(duration: 0.3), value: showClosureBanner)
 
             // 按钮层
             VStack {
@@ -72,6 +98,34 @@ struct MapTabView: View {
         .onAppear {
             // 页面出现时检查并请求权限
             locationManager.checkAndRequestPermission()
+        }
+        // 监听速度警告变化
+        .onReceive(locationManager.$speedWarning) { warning in
+            if warning != nil {
+                withAnimation {
+                    showSpeedWarning = true
+                }
+                // 3 秒后自动隐藏
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation {
+                        showSpeedWarning = false
+                    }
+                }
+            }
+        }
+        // 监听闭环状态变化
+        .onReceive(locationManager.$isPathClosed) { isClosed in
+            if isClosed {
+                withAnimation {
+                    showClosureBanner = true
+                }
+                // 3 秒后自动隐藏
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    withAnimation {
+                        showClosureBanner = false
+                    }
+                }
+            }
         }
     }
 
@@ -217,8 +271,48 @@ struct MapTabView: View {
         .shadow(color: .black.opacity(0.3), radius: 10)
         .padding(40)
     }
+
+    /// 速度警告横幅
+    private func speedWarningBanner(message: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: locationManager.isTracking ? "exclamationmark.triangle.fill" : "xmark.octagon.fill")
+                .font(.body)
+
+            Text(message)
+                .font(.subheadline)
+                .fontWeight(.medium)
+        }
+        .foregroundColor(.white)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity)
+        .background(
+            // 追踪中：黄色警告，已停止：红色
+            locationManager.isTracking ? Color.orange : Color.red
+        )
+        .padding(.top, 50)  // 避开状态栏
+    }
+
+    /// 闭环成功横幅
+    private var closureSuccessBanner: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.body)
+
+            Text("圈地成功！领地已标记")
+                .font(.subheadline)
+                .fontWeight(.medium)
+        }
+        .foregroundColor(.white)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity)
+        .background(Color.green)
+        .padding(.top, 50)  // 避开状态栏
+    }
 }
 
 #Preview {
     MapTabView()
+        .environmentObject(LocationManager())
 }

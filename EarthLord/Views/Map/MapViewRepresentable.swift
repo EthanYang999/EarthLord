@@ -31,6 +31,9 @@ struct MapViewRepresentable: UIViewRepresentable {
     /// 是否正在追踪
     var isTracking: Bool
 
+    /// 路径是否已闭合（影响轨迹颜色和多边形显示）
+    var isPathClosed: Bool
+
     // MARK: - UIViewRepresentable
 
     /// 创建 MKMapView
@@ -66,8 +69,8 @@ struct MapViewRepresentable: UIViewRepresentable {
         // 关键：更新 Coordinator 的 parent 引用，否则版本号检查会用旧值
         context.coordinator.parent = self
 
-        // 更新轨迹显示
-        context.coordinator.updateTrackingPath(on: uiView, with: trackingPath)
+        // 更新轨迹显示（传入闭环状态）
+        context.coordinator.updateTrackingPath(on: uiView, with: trackingPath, isPathClosed: isPathClosed)
     }
 
     /// 创建 Coordinator
@@ -89,8 +92,14 @@ struct MapViewRepresentable: UIViewRepresentable {
         /// 当前显示的轨迹线（用于更新时移除旧轨迹）
         private var currentPolyline: MKPolyline?
 
+        /// 当前显示的多边形（闭环后填充区域）
+        private var currentPolygon: MKPolygon?
+
         /// 上次更新的路径版本号（避免重复绘制）
         private var lastPathVersion: Int = -1
+
+        /// 当前路径是否已闭合（用于渲染器判断颜色）
+        private var isCurrentlyPathClosed: Bool = false
 
         init(_ parent: MapViewRepresentable) {
             self.parent = parent
@@ -102,15 +111,25 @@ struct MapViewRepresentable: UIViewRepresentable {
         /// - Parameters:
         ///   - mapView: 地图视图
         ///   - path: WGS-84 坐标数组
-        func updateTrackingPath(on mapView: MKMapView, with path: [CLLocationCoordinate2D]) {
+        ///   - isPathClosed: 路径是否已闭合
+        func updateTrackingPath(on mapView: MKMapView, with path: [CLLocationCoordinate2D], isPathClosed: Bool) {
             // 检查是否需要更新（通过版本号判断）
             guard parent.pathUpdateVersion != lastPathVersion else { return }
             lastPathVersion = parent.pathUpdateVersion
+
+            // 更新闭合状态
+            isCurrentlyPathClosed = isPathClosed
 
             // 移除旧的轨迹线
             if let oldPolyline = currentPolyline {
                 mapView.removeOverlay(oldPolyline)
                 currentPolyline = nil
+            }
+
+            // 移除旧的多边形
+            if let oldPolygon = currentPolygon {
+                mapView.removeOverlay(oldPolygon)
+                currentPolygon = nil
             }
 
             // 如果路径少于 2 个点，无法绘制线条
@@ -130,7 +149,15 @@ struct MapViewRepresentable: UIViewRepresentable {
             mapView.addOverlay(polyline)
             currentPolyline = polyline
 
-            print("🗺️ 轨迹已更新，共 \(path.count) 个点")
+            // 如果路径已闭合且至少有 3 个点，创建多边形填充
+            if isPathClosed && gcj02Coordinates.count >= 3 {
+                let polygon = MKPolygon(coordinates: gcj02Coordinates, count: gcj02Coordinates.count)
+                mapView.addOverlay(polygon, level: .aboveRoads)
+                currentPolygon = polygon
+                print("🟢 闭环区域已填充，共 \(gcj02Coordinates.count) 个顶点")
+            }
+
+            print("🗺️ 轨迹已更新，共 \(path.count) 个点，闭合状态: \(isPathClosed)")
         }
 
         // MARK: - MKMapViewDelegate
@@ -178,11 +205,29 @@ struct MapViewRepresentable: UIViewRepresentable {
             if let polyline = overlay as? MKPolyline {
                 let renderer = MKPolylineRenderer(polyline: polyline)
 
-                // 设置轨迹样式
-                renderer.strokeColor = UIColor.cyan      // 青色轨迹
+                // 根据闭合状态设置轨迹颜色
+                if isCurrentlyPathClosed {
+                    renderer.strokeColor = UIColor.systemGreen  // 闭合后：绿色轨迹
+                } else {
+                    renderer.strokeColor = UIColor.systemCyan   // 追踪中：青色轨迹
+                }
+
                 renderer.lineWidth = 5                   // 线宽 5pt
                 renderer.lineCap = .round                // 圆头线帽
                 renderer.lineJoin = .round               // 圆角连接
+
+                return renderer
+            }
+
+            // 处理多边形（闭环区域填充）
+            if let polygon = overlay as? MKPolygon {
+                let renderer = MKPolygonRenderer(polygon: polygon)
+
+                // 半透明绿色填充
+                renderer.fillColor = UIColor.systemGreen.withAlphaComponent(0.25)
+                // 绿色边框
+                renderer.strokeColor = UIColor.systemGreen
+                renderer.lineWidth = 2
 
                 return renderer
             }
@@ -211,6 +256,7 @@ struct MapViewRepresentable: UIViewRepresentable {
         hasLocatedUser: .constant(false),
         trackingPath: .constant([]),
         pathUpdateVersion: 0,
-        isTracking: false
+        isTracking: false,
+        isPathClosed: false
     )
 }

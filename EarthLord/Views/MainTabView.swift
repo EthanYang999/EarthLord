@@ -10,6 +10,9 @@ import SwiftUI
 struct MainTabView: View {
     @State private var selectedTab = 0
 
+    /// 定位管理器（全局共享）
+    @StateObject private var locationManager = LocationManager()
+
     var body: some View {
         TabView(selection: $selectedTab) {
             MapTabView()
@@ -41,6 +44,8 @@ struct MainTabView: View {
                 .tag(3)
         }
         .tint(ApocalypseTheme.primary)
+        // 注入 LocationManager 供子视图使用
+        .environmentObject(locationManager)
     }
 }
 
