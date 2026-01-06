@@ -18,6 +18,9 @@ struct Territory: Codable, Identifiable {
     let area: Double
     let pointCount: Int?
     let isActive: Bool?
+    let completedAt: String?      // 圈地完成时间
+    let startedAt: String?        // 圈地开始时间
+    let createdAt: String?        // 记录创建时间
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -27,6 +30,9 @@ struct Territory: Codable, Identifiable {
         case area
         case pointCount = "point_count"
         case isActive = "is_active"
+        case completedAt = "completed_at"
+        case startedAt = "started_at"
+        case createdAt = "created_at"
     }
 
     /// 将 path 转换为 CLLocationCoordinate2D 数组
@@ -35,5 +41,19 @@ struct Territory: Codable, Identifiable {
             guard let lat = point["lat"], let lon = point["lon"] else { return nil }
             return CLLocationCoordinate2D(latitude: lat, longitude: lon)
         }
+    }
+
+    /// 格式化面积显示
+    var formattedArea: String {
+        if area >= 1_000_000 {
+            return String(format: "%.2f km²", area / 1_000_000)
+        } else {
+            return String(format: "%.0f m²", area)
+        }
+    }
+
+    /// 显示名称（无名称时显示默认值）
+    var displayName: String {
+        return name ?? "未命名领地"
     }
 }

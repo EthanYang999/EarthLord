@@ -191,6 +191,7 @@ class TerritoryManager: ObservableObject {
             .select()
             .eq("user_id", value: userId)
             .eq("is_active", value: true)
+            .order("created_at", ascending: false)
             .execute()
 
         let decoder = JSONDecoder()
@@ -198,6 +199,25 @@ class TerritoryManager: ObservableObject {
 
         TerritoryLogger.shared.log("加载我的领地: \(territories.count) 个", type: .info)
         return territories
+    }
+
+    /// 删除领地
+    /// - Parameter territoryId: 领地 ID
+    /// - Returns: 是否删除成功
+    func deleteTerritory(territoryId: String) async -> Bool {
+        do {
+            try await supabase
+                .from("territories")
+                .delete()
+                .eq("id", value: territoryId)
+                .execute()
+
+            TerritoryLogger.shared.log("领地删除成功: \(territoryId)", type: .success)
+            return true
+        } catch {
+            TerritoryLogger.shared.log("领地删除失败: \(error.localizedDescription)", type: .error)
+            return false
+        }
     }
 }
 
