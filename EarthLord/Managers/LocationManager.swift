@@ -57,6 +57,9 @@ class LocationManager: NSObject, ObservableObject {
     /// 计算出的领地面积（平方米）
     @Published var calculatedArea: Double = 0
 
+    /// 追踪开始时间（用于上传时记录）
+    @Published var trackingStartTime: Date?
+
     // MARK: - Private Properties
 
     /// CoreLocation 定位管理器
@@ -172,6 +175,7 @@ class LocationManager: NSObject, ObservableObject {
         // 设置追踪状态
         isTracking = true
         isPathClosed = false
+        trackingStartTime = Date()  // 记录开始时间
 
         // 重置速度检测状态
         speedWarning = nil
@@ -213,6 +217,18 @@ class LocationManager: NSObject, ObservableObject {
 
         // 添加日志
         TerritoryLogger.shared.log("停止追踪，共 \(pathCoordinates.count) 个点", type: .info)
+
+        // ⚠️ 重置所有状态（防止重复上传）
+        pathCoordinates.removeAll()
+        pathUpdateVersion += 1
+        isPathClosed = false
+        speedWarning = nil
+        isOverSpeed = false
+        lastLocationTimestamp = nil
+        territoryValidationPassed = false
+        territoryValidationError = nil
+        calculatedArea = 0
+        trackingStartTime = nil
     }
 
     /// 清除路径
@@ -228,6 +244,7 @@ class LocationManager: NSObject, ObservableObject {
         territoryValidationPassed = false
         territoryValidationError = nil
         calculatedArea = 0
+        trackingStartTime = nil
         print("🗑️ 路径已清除")
     }
 
