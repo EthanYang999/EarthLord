@@ -56,6 +56,12 @@ struct MapTabView: View {
     @State private var showCollisionWarning = false
     @State private var collisionWarningLevel: WarningLevel = .safe
 
+    // MARK: - 探索功能状态
+    /// 是否正在探索（加载中）
+    @State private var isExploring = false
+    /// 是否显示探索结果 sheet
+    @State private var showExplorationResult = false
+
     /// 当前用户 ID（用于碰撞检测）
     private var currentUserId: String? {
         authManager.currentUser?.id.uuidString
@@ -119,24 +125,36 @@ struct MapTabView: View {
             // 按钮层
             VStack {
                 Spacer()
-                HStack {
-                    // 左侧：确认登记按钮（验证通过时显示）
-                    if locationManager.territoryValidationPassed {
+
+                // 确认登记按钮（验证通过时显示，在底部按钮上方）
+                if locationManager.territoryValidationPassed {
+                    HStack {
                         confirmButton
+                        Spacer()
                     }
+                    .padding(.bottom, 8)
+                }
+
+                // 底部按钮行：圈地（左）、定位（中）、探索（右）
+                HStack {
+                    // 圈地按钮（左侧）
+                    trackingButton
 
                     Spacer()
 
-                    VStack(spacing: 12) {
-                        // 圈地按钮
-                        trackingButton
+                    // 定位按钮（中间）
+                    locationButton
 
-                        // 定位按钮
-                        locationButton
-                    }
+                    Spacer()
+
+                    // 探索按钮（右侧）
+                    explorationButton
                 }
             }
             .padding()
+            .sheet(isPresented: $showExplorationResult) {
+                ExplorationResultView(result: MockExplorationData.explorationResult)
+            }
 
             // 左上角坐标显示（调试用）
             if let location = userLocation {
@@ -263,6 +281,56 @@ struct MapTabView: View {
                 .background(ApocalypseTheme.primary)
                 .clipShape(Circle())
                 .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+        }
+    }
+
+    /// 探索按钮
+    private var explorationButton: some View {
+        Button {
+            startExploration()
+        } label: {
+            HStack(spacing: 8) {
+                if isExploring {
+                    // 加载状态：显示转圈
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(0.8)
+
+                    Text("搜索中...")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                } else {
+                    // 正常状态：显示图标和文字
+                    Image(systemName: "binoculars.fill")
+                        .font(.body)
+
+                    Text("探索")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
+            }
+            .foregroundColor(.white)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                Capsule()
+                    .fill(isExploring ? Color.gray : ApocalypseTheme.primary)
+            )
+            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+        }
+        .disabled(isExploring)
+    }
+
+    /// 开始探索
+    private func startExploration() {
+        // 进入加载状态
+        isExploring = true
+
+        // 模拟1.5秒搜索过程
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            // 搜索完成，显示结果页面
+            isExploring = false
+            showExplorationResult = true
         }
     }
 
