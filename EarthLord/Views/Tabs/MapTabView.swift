@@ -57,8 +57,8 @@ struct MapTabView: View {
     @State private var collisionWarningLevel: WarningLevel = .safe
 
     // MARK: - 探索功能状态
-    /// 是否正在探索（加载中）
-    @State private var isExploring = false
+    /// 探索管理器
+    @StateObject private var explorationManager = ExplorationManager.shared
     /// 是否显示探索结果 sheet
     @State private var showExplorationResult = false
 
@@ -135,25 +135,37 @@ struct MapTabView: View {
                     .padding(.bottom, 8)
                 }
 
-                // 底部按钮行：圈地（左）、定位（中）、探索（右）
-                HStack {
-                    // 圈地按钮（左侧）
-                    trackingButton
+                // 探索中显示 ActiveExplorationView，否则显示按钮行
+                if explorationManager.isExploring {
+                    ActiveExplorationView(
+                        explorationManager: explorationManager,
+                        onStop: {
+                            stopExploration()
+                        }
+                    )
+                } else {
+                    // 底部按钮行：圈地（左）、定位（中）、探索（右）
+                    HStack {
+                        // 圈地按钮（左侧）
+                        trackingButton
 
-                    Spacer()
+                        Spacer()
 
-                    // 定位按钮（中间）
-                    locationButton
+                        // 定位按钮（中间）
+                        locationButton
 
-                    Spacer()
+                        Spacer()
 
-                    // 探索按钮（右侧）
-                    explorationButton
+                        // 探索按钮（右侧）
+                        explorationButton
+                    }
                 }
             }
             .padding()
             .sheet(isPresented: $showExplorationResult) {
-                ExplorationResultView(result: MockExplorationData.explorationResult)
+                if let result = explorationManager.lastExplorationResult {
+                    ExplorationResultView(result: result)
+                }
             }
 
             // 左上角坐标显示（调试用）
@@ -290,47 +302,63 @@ struct MapTabView: View {
             startExploration()
         } label: {
             HStack(spacing: 8) {
-                if isExploring {
-                    // 加载状态：显示转圈
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                        .scaleEffect(0.8)
+                Image(systemName: "figure.walk")
+                    .font(.body)
 
-                    Text("搜索中...")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                } else {
-                    // 正常状态：显示图标和文字
-                    Image(systemName: "binoculars.fill")
-                        .font(.body)
-
-                    Text("探索")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                }
+                Text("开始探索")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
             }
             .foregroundColor(.white)
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
             .background(
                 Capsule()
-                    .fill(isExploring ? Color.gray : ApocalypseTheme.primary)
+                    .fill(ApocalypseTheme.success)
             )
             .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
         }
-        .disabled(isExploring)
+        .disabled(locationManager.isTracking) // 圈地时不能探索
     }
 
     /// 开始探索
     private func startExploration() {
-        // 进入加载状态
-        isExploring = true
+        print("[MapTabView] 📍 开始探索按钮被点击")
 
-        // 模拟1.5秒搜索过程
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            // 搜索完成，显示结果页面
-            isExploring = false
-            showExplorationResult = true
+        // 检查是否正在圈地
+        guard !locationManager.isTracking else {
+            print("[MapTabView] ⚠️ 正在圈地中，无法探索")
+            return
+        }
+
+        // 开始探索
+        Task {
+            // 确保物品定义已加载（奖励生成需要）
+            let inventoryManager = InventoryManager.shared
+            if inventoryManager.itemDefinitions.isEmpty {
+                print("[MapTabView] 📦 加载物品定义...")
+                await inventoryManager.loadItemDefinitions()
+            }
+
+            print("[MapTabView] 🚀 调用 ExplorationManager.startExploration")
+            await explorationManager.startExploration(with: locationManager)
+        }
+    }
+
+    /// 停止探索
+    private func stopExploration() {
+        print("[MapTabView] ⏹️ 停止探索按钮被点击")
+
+        Task {
+            print("[MapTabView] 🛑 调用 ExplorationManager.stopExploration")
+            let result = await explorationManager.stopExploration()
+
+            if result != nil {
+                print("[MapTabView] ✅ 探索结束，显示结果页面")
+                showExplorationResult = true
+            } else {
+                print("[MapTabView] ❌ 探索结果为空")
+            }
         }
     }
 
