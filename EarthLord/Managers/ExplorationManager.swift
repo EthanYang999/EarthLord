@@ -716,105 +716,40 @@ extension ExplorationManager {
     }
 
     /// 执行搜刮
+    /// 所有物品由 AI 实时生成，物品稀有度由 POI 危险等级决定
     /// - Parameter poi: 要搜刮的 POI
     /// - Returns: 获得的物品列表
     func scavengePOI(_ poi: POI) async -> [GeneratedRewardItem] {
-        print("[ExplorationManager] 🔦 开始搜刮: \(poi.name)")
-
-        // 确保物品定义已加载
-        let inventoryManager = InventoryManager.shared
-        if inventoryManager.itemDefinitions.isEmpty {
-            await inventoryManager.loadItemDefinitions()
-        }
-
-        // AI 生成器
-        let aiGenerator = AIItemGenerator.shared
-        let isFirstVisit = !scavengedPOIIds.contains(poi.id)
+        print("[ExplorationManager] 🔦 开始搜刮: \(poi.name) (危险等级: \(poi.dangerLevel))")
 
         // 随机生成 1-3 件物品
         let itemCount = Int.random(in: 1...3)
-        let availableItems = Array(inventoryManager.itemDefinitions.values)
 
-        guard !availableItems.isEmpty else {
-            print("[ExplorationManager] ⚠️ 没有可用的物品定义")
-            return []
-        }
-
+        // 使用 AI 生成所有物品
+        let aiGenerator = AIItemGenerator.shared
         var generatedItems: [GeneratedRewardItem] = []
 
-        for _ in 0..<itemCount {
-            // 随机选择物品
-            guard let item = availableItems.randomElement() else { continue }
+        // 调用 AI 生成物品
+        if let aiItems = await aiGenerator.generateItems(for: poi, count: itemCount) {
+            // AI 生成成功
+            generatedItems = aiGenerator.convertToRewardItems(aiItems, from: poi)
+            print("[ExplorationManager] 🤖 AI 成功生成 \(generatedItems.count) 件物品")
+        } else {
+            // AI 生成失败，使用本地备用方案
+            print("[ExplorationManager] ⚠️ AI 生成失败，使用备用方案")
+            generatedItems = generateFallbackItems(for: poi, count: itemCount)
+        }
 
-            // 随机数量 1-3
-            let quantity = Int.random(in: 1...3)
-
-            // 随机品质
-            let qualities = ["normal", "good", "worn"]
-            let quality = item.hasQuality ? qualities.randomElement() : nil
-
-            // 检查是否触发 AI 生成
-            var finalItem: GeneratedRewardItem
-
-            if aiGenerator.shouldTriggerAI(rarity: item.rarity, poiId: poi.id) {
-                // 尝试 AI 生成
-                if let aiResult = await aiGenerator.generateAIItem(baseItem: item, poi: poi) {
-                    // AI 生成成功，创建 AI 版本物品
-                    finalItem = GeneratedRewardItem(
-                        itemId: item.id,
-                        itemName: aiResult.uniqueName,
-                        quantity: quantity,
-                        quality: "pristine",  // AI 物品品质最高
-                        rarity: item.rarity,
-                        isAIGenerated: true,
-                        aiStory: aiResult.story,
-                        aiBonusEffect: aiResult.bonusEffect
-                    )
-                    print("[ExplorationManager] 🤖 AI 物品生成成功: \(aiResult.uniqueName)")
-                } else {
-                    // AI 生成失败，降级为普通物品
-                    finalItem = GeneratedRewardItem(
-                        itemId: item.id,
-                        itemName: item.name,
-                        quantity: quantity,
-                        quality: quality,
-                        rarity: item.rarity
-                    )
-                    print("[ExplorationManager] ⚠️ AI 生成失败，使用普通物品")
-                }
-            } else {
-                // 普通物品
-                finalItem = GeneratedRewardItem(
-                    itemId: item.id,
-                    itemName: item.name,
-                    quantity: quantity,
-                    quality: quality,
-                    rarity: item.rarity
-                )
-            }
-
-            generatedItems.append(finalItem)
-
-            // 添加到背包
-            let success = await inventoryManager.addItem(
-                itemId: item.id,
-                quantity: quantity,
-                quality: finalItem.quality
-            )
-
-            if success {
-                print("[ExplorationManager] ✅ 搜刮获得: \(finalItem.itemName) x\(quantity)")
-            }
+        // 添加物品到背包（AI 生成的物品使用虚拟 UUID）
+        let inventoryManager = InventoryManager.shared
+        for item in generatedItems {
+            // AI 物品暂时不添加到背包（因为没有对应的物品定义 ID）
+            // 后续可以扩展为动态创建物品定义
+            print("[ExplorationManager] ✅ 搜刮获得: \(item.itemName) [\(item.rarity)]")
         }
 
         // 标记 POI 为已搜刮
         scavengedPOIIds.insert(poi.id)
-
-        // 更新 AI 生成器状态
-        if isFirstVisit {
-            aiGenerator.recordPOIVisit(poi.id)
-        }
-        aiGenerator.incrementScavengeStreak()
 
         // 关闭接近弹窗
         showPOIPopup = false
@@ -833,6 +768,67 @@ extension ExplorationManager {
         print("[ExplorationManager] 🎉 搜刮完成，获得 \(generatedItems.count) 件物品")
 
         return generatedItems
+    }
+
+    /// 生成备用物品（当 AI 服务不可用时）
+    /// - Parameters:
+    ///   - poi: POI 信息
+    ///   - count: 物品数量
+    /// - Returns: 备用物品列表
+    private func generateFallbackItems(for poi: POI, count: Int) -> [GeneratedRewardItem] {
+        // 根据 POI 类型生成预设物品名称
+        let presetItems: [(name: String, category: String)] = {
+            switch poi.type {
+            case .hospital, .pharmacy:
+                return [("急救包", "医疗"), ("绷带", "医疗"), ("止痛药", "医疗")]
+            case .supermarket, .restaurant:
+                return [("罐头食品", "食物"), ("瓶装水", "食物"), ("压缩饼干", "食物")]
+            case .hardware, .gasStation, .autoRepair:
+                return [("手电筒", "工具"), ("绳索", "工具"), ("工具箱", "工具")]
+            case .police, .fireStation:
+                return [("警棍", "武器"), ("防弹衣", "防具"), ("对讲机", "工具")]
+            default:
+                return [("杂物", "材料"), ("旧报纸", "材料"), ("破布", "材料")]
+            }
+        }()
+
+        // 根据危险等级确定稀有度
+        let rarities = getRarityForDangerLevel(poi.dangerLevel)
+
+        var items: [GeneratedRewardItem] = []
+        for i in 0..<count {
+            let preset = presetItems[i % presetItems.count]
+            let rarity = rarities.randomElement() ?? "common"
+
+            items.append(GeneratedRewardItem(
+                itemId: UUID(),
+                itemName: preset.name,
+                quantity: 1,
+                quality: "normal",
+                rarity: rarity,
+                isAIGenerated: false,
+                aiStory: nil,
+                aiBonusEffect: nil
+            ))
+        }
+
+        return items
+    }
+
+    /// 根据危险等级获取可能的稀有度列表
+    private func getRarityForDangerLevel(_ level: Int) -> [String] {
+        switch level {
+        case 1, 2:
+            return ["common", "common", "common", "uncommon"]
+        case 3:
+            return ["common", "uncommon", "uncommon", "rare"]
+        case 4:
+            return ["uncommon", "rare", "rare", "epic"]
+        case 5:
+            return ["rare", "epic", "epic", "legendary"]
+        default:
+            return ["common", "uncommon"]
+        }
     }
 
     /// 关闭 POI 弹窗（稍后再说）
