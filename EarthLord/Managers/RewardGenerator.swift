@@ -96,6 +96,32 @@ struct GeneratedRewardItem {
     let quantity: Int
     let quality: String?
     let rarity: String
+
+    // AI 生成相关字段
+    let isAIGenerated: Bool
+    let aiStory: String?
+    let aiBonusEffect: String?
+
+    /// 便利初始化器（默认值保持向后兼容）
+    init(
+        itemId: UUID,
+        itemName: String,
+        quantity: Int,
+        quality: String?,
+        rarity: String,
+        isAIGenerated: Bool = false,
+        aiStory: String? = nil,
+        aiBonusEffect: String? = nil
+    ) {
+        self.itemId = itemId
+        self.itemName = itemName
+        self.quantity = quantity
+        self.quality = quality
+        self.rarity = rarity
+        self.isAIGenerated = isAIGenerated
+        self.aiStory = aiStory
+        self.aiBonusEffect = aiBonusEffect
+    }
 }
 
 // MARK: - RewardGenerator

@@ -39,9 +39,11 @@ final class POISearchManager {
     // MARK: - Public Methods
 
     /// 搜索附近 POI
-    /// - Parameter location: 搜索中心点坐标
+    /// - Parameters:
+    ///   - location: 搜索中心点坐标
+    ///   - maxCount: 最大返回数量（可选，默认使用 maxPOICount）
     /// - Returns: POI 列表
-    func searchNearbyPOIs(at location: CLLocationCoordinate2D) async -> [POI] {
+    func searchNearbyPOIs(at location: CLLocationCoordinate2D, maxCount: Int? = nil) async -> [POI] {
         print("[POISearchManager] 开始搜索附近 POI，中心: \(location.latitude), \(location.longitude)")
 
         // 定义要搜索的 POI 类型
@@ -74,9 +76,10 @@ final class POISearchManager {
 
         // 按距离排序并限制数量
         let sortedPOIs = sortByDistance(pois: uniquePOIs, from: location)
-        let limitedPOIs = Array(sortedPOIs.prefix(maxPOICount))
+        let limitCount = min(maxCount ?? maxPOICount, maxPOICount)
+        let limitedPOIs = Array(sortedPOIs.prefix(limitCount))
 
-        print("[POISearchManager] 搜索完成，找到 \(limitedPOIs.count) 个 POI")
+        print("[POISearchManager] 搜索完成，找到 \(limitedPOIs.count) 个 POI (限制: \(limitCount))")
 
         return limitedPOIs
     }

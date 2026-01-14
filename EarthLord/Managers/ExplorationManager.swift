@@ -221,6 +221,9 @@ final class ExplorationManager: ObservableObject {
         // 创建数据库记录
         await createExplorationSession()
 
+        // 激活玩家位置上报（多人机制）
+        PlayerLocationManager.shared.activate(with: locationManager)
+
         // Day 22: 搜索附近 POI 并设置围栏
         if let location = locationManager.userLocation {
             await searchAndSetupPOIs(at: location)
@@ -261,6 +264,9 @@ final class ExplorationManager: ObservableObject {
         locationSubscription = nil
         timer?.invalidate()
         timer = nil
+
+        // 停用玩家位置上报（多人机制）
+        PlayerLocationManager.shared.deactivate()
 
         isSaving = true
 
@@ -616,8 +622,18 @@ extension ExplorationManager {
     private func searchAndSetupPOIs(at location: CLLocationCoordinate2D) async {
         print("[ExplorationManager] 🔍 开始搜索附近 POI...")
 
-        // 使用 POISearchManager 搜索
-        let pois = await POISearchManager.shared.searchNearbyPOIs(at: location)
+        // 查询附近玩家数量（多人机制）
+        let playerLocationManager = PlayerLocationManager.shared
+        let nearbyCount = await playerLocationManager.queryNearbyPlayers(at: location)
+        let recommendedPOICount = playerLocationManager.getRecommendedPOICount(for: nearbyCount)
+
+        print("[ExplorationManager] 👥 附近玩家: \(nearbyCount) 人，推荐 POI 数量: \(recommendedPOICount)")
+
+        // 使用 POISearchManager 搜索，传入推荐数量
+        let pois = await POISearchManager.shared.searchNearbyPOIs(
+            at: location,
+            maxCount: recommendedPOICount
+        )
 
         // 更新 POI 列表
         discoveredPOIs = pois
@@ -711,6 +727,10 @@ extension ExplorationManager {
             await inventoryManager.loadItemDefinitions()
         }
 
+        // AI 生成器
+        let aiGenerator = AIItemGenerator.shared
+        let isFirstVisit = !scavengedPOIIds.contains(poi.id)
+
         // 随机生成 1-3 件物品
         let itemCount = Int.random(in: 1...3)
         let availableItems = Array(inventoryManager.itemDefinitions.values)
@@ -733,30 +753,68 @@ extension ExplorationManager {
             let qualities = ["normal", "good", "worn"]
             let quality = item.hasQuality ? qualities.randomElement() : nil
 
-            let reward = GeneratedRewardItem(
-                itemId: item.id,
-                itemName: item.name,
-                quantity: quantity,
-                quality: quality,
-                rarity: item.rarity
-            )
+            // 检查是否触发 AI 生成
+            var finalItem: GeneratedRewardItem
 
-            generatedItems.append(reward)
+            if aiGenerator.shouldTriggerAI(rarity: item.rarity, poiId: poi.id) {
+                // 尝试 AI 生成
+                if let aiResult = await aiGenerator.generateAIItem(baseItem: item, poi: poi) {
+                    // AI 生成成功，创建 AI 版本物品
+                    finalItem = GeneratedRewardItem(
+                        itemId: item.id,
+                        itemName: aiResult.uniqueName,
+                        quantity: quantity,
+                        quality: "pristine",  // AI 物品品质最高
+                        rarity: item.rarity,
+                        isAIGenerated: true,
+                        aiStory: aiResult.story,
+                        aiBonusEffect: aiResult.bonusEffect
+                    )
+                    print("[ExplorationManager] 🤖 AI 物品生成成功: \(aiResult.uniqueName)")
+                } else {
+                    // AI 生成失败，降级为普通物品
+                    finalItem = GeneratedRewardItem(
+                        itemId: item.id,
+                        itemName: item.name,
+                        quantity: quantity,
+                        quality: quality,
+                        rarity: item.rarity
+                    )
+                    print("[ExplorationManager] ⚠️ AI 生成失败，使用普通物品")
+                }
+            } else {
+                // 普通物品
+                finalItem = GeneratedRewardItem(
+                    itemId: item.id,
+                    itemName: item.name,
+                    quantity: quantity,
+                    quality: quality,
+                    rarity: item.rarity
+                )
+            }
+
+            generatedItems.append(finalItem)
 
             // 添加到背包
             let success = await inventoryManager.addItem(
                 itemId: item.id,
                 quantity: quantity,
-                quality: quality
+                quality: finalItem.quality
             )
 
             if success {
-                print("[ExplorationManager] ✅ 搜刮获得: \(item.name) x\(quantity)")
+                print("[ExplorationManager] ✅ 搜刮获得: \(finalItem.itemName) x\(quantity)")
             }
         }
 
         // 标记 POI 为已搜刮
         scavengedPOIIds.insert(poi.id)
+
+        // 更新 AI 生成器状态
+        if isFirstVisit {
+            aiGenerator.recordPOIVisit(poi.id)
+        }
+        aiGenerator.incrementScavengeStreak()
 
         // 关闭接近弹窗
         showPOIPopup = false
