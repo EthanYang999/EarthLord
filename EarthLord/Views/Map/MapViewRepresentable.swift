@@ -40,6 +40,12 @@ struct MapViewRepresentable: UIViewRepresentable {
     /// 当前用户 ID（用于区分自己和他人的领地）
     var currentUserId: String?
 
+    /// Day 22: POI 列表
+    var pois: [POI]
+
+    /// Day 22: 已搜刮的 POI ID 集合
+    var scavengedPOIIds: Set<String>
+
     // MARK: - UIViewRepresentable
 
     /// 创建 MKMapView
@@ -80,6 +86,9 @@ struct MapViewRepresentable: UIViewRepresentable {
 
         // 更新领地显示
         context.coordinator.drawTerritories(on: uiView, territories: territories, currentUserId: currentUserId)
+
+        // Day 22: 更新 POI 标记
+        context.coordinator.updatePOIAnnotations(on: uiView, pois: pois, scavengedIds: scavengedPOIIds)
     }
 
     /// 创建 Coordinator
@@ -112,6 +121,12 @@ struct MapViewRepresentable: UIViewRepresentable {
 
         /// 上次绘制的领地 ID 集合（避免重复绘制）
         private var lastTerritoryIds: Set<String> = []
+
+        /// Day 22: 上次显示的 POI ID 集合
+        private var lastPOIIds: Set<String> = []
+
+        /// Day 22: 上次的已搜刮 POI ID 集合
+        private var lastScavengedIds: Set<String> = []
 
         init(_ parent: MapViewRepresentable) {
             self.parent = parent
@@ -219,6 +234,45 @@ struct MapViewRepresentable: UIViewRepresentable {
             print("🏴 已绘制 \(territories.count) 块领地")
         }
 
+        // MARK: - Day 22: POI 标记方法
+
+        /// 更新 POI 标记
+        /// - Parameters:
+        ///   - mapView: 地图视图
+        ///   - pois: POI 列表
+        ///   - scavengedIds: 已搜刮的 POI ID 集合
+        func updatePOIAnnotations(on mapView: MKMapView, pois: [POI], scavengedIds: Set<String>) {
+            // 获取当前 POI ID 集合
+            let currentIds = Set(pois.map { $0.id })
+
+            // 如果 POI 没有变化且搜刮状态没有变化，不需要更新
+            guard currentIds != lastPOIIds || scavengedIds != lastScavengedIds else { return }
+            lastPOIIds = currentIds
+            lastScavengedIds = scavengedIds
+
+            // 移除旧的 POI 标记
+            let existingAnnotations = mapView.annotations.filter { $0 is POIAnnotation }
+            mapView.removeAnnotations(existingAnnotations)
+
+            // 如果没有 POI，直接返回
+            guard !pois.isEmpty else { return }
+
+            // 添加新的 POI 标记
+            for poi in pois {
+                // 坐标转换：WGS-84 → GCJ-02
+                let gcj02Coord = CoordinateConverter.wgs84ToGcj02(poi.coordinate)
+
+                let annotation = POIAnnotation(
+                    poi: poi,
+                    coordinate: gcj02Coord,
+                    isScavenged: scavengedIds.contains(poi.id)
+                )
+                mapView.addAnnotation(annotation)
+            }
+
+            print("📍 已更新 \(pois.count) 个 POI 标记")
+        }
+
         // MARK: - MKMapViewDelegate
 
         /// 用户位置更新回调（关键方法！）
@@ -314,6 +368,94 @@ struct MapViewRepresentable: UIViewRepresentable {
         func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
             // 地图瓦片加载完成
         }
+
+        /// Day 22: POI 标记视图渲染
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            // 跳过用户位置标记
+            if annotation is MKUserLocation {
+                return nil
+            }
+
+            // 处理 POI 标记
+            if let poiAnnotation = annotation as? POIAnnotation {
+                let identifier = "POIAnnotation"
+                var view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+
+                if view == nil {
+                    view = MKMarkerAnnotationView(annotation: poiAnnotation, reuseIdentifier: identifier)
+                    view?.canShowCallout = true
+                } else {
+                    view?.annotation = poiAnnotation
+                }
+
+                // 设置标记样式
+                if poiAnnotation.isScavenged {
+                    // 已搜刮：灰色
+                    view?.markerTintColor = .systemGray
+                    view?.glyphImage = UIImage(systemName: "checkmark")
+                } else {
+                    // 未搜刮：根据类型设置颜色
+                    view?.markerTintColor = poiAnnotation.markerColor
+                    view?.glyphImage = UIImage(systemName: poiAnnotation.poi.type.icon)
+                }
+
+                view?.displayPriority = .required
+
+                return view
+            }
+
+            return nil
+        }
+    }
+}
+
+// MARK: - POI Annotation
+
+/// POI 标记类
+class POIAnnotation: NSObject, MKAnnotation {
+
+    /// POI 数据
+    let poi: POI
+
+    /// 标记坐标（GCJ-02）
+    var coordinate: CLLocationCoordinate2D
+
+    /// 是否已搜刮
+    var isScavenged: Bool
+
+    /// 标记标题
+    var title: String? {
+        poi.name
+    }
+
+    /// 标记副标题
+    var subtitle: String? {
+        poi.type.rawValue
+    }
+
+    /// 标记颜色
+    var markerColor: UIColor {
+        switch poi.type {
+        case .hospital:
+            return .systemRed
+        case .pharmacy:
+            return .systemGreen
+        case .supermarket:
+            return .systemBlue
+        case .restaurant:
+            return .systemOrange
+        case .gasStation:
+            return .systemYellow
+        default:
+            return .systemGray
+        }
+    }
+
+    init(poi: POI, coordinate: CLLocationCoordinate2D, isScavenged: Bool) {
+        self.poi = poi
+        self.coordinate = coordinate
+        self.isScavenged = isScavenged
+        super.init()
     }
 }
 
@@ -328,6 +470,8 @@ struct MapViewRepresentable: UIViewRepresentable {
         isTracking: false,
         isPathClosed: false,
         territories: [],
-        currentUserId: nil
+        currentUserId: nil,
+        pois: [],
+        scavengedPOIIds: []
     )
 }

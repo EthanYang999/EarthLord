@@ -80,7 +80,9 @@ struct MapTabView: View {
                 isTracking: locationManager.isTracking,
                 isPathClosed: locationManager.isPathClosed,
                 territories: territories,
-                currentUserId: authManager.currentUser?.id.uuidString
+                currentUserId: authManager.currentUser?.id.uuidString,
+                pois: explorationManager.discoveredPOIs,
+                scavengedPOIIds: explorationManager.scavengedPOIIds
             )
             .ignoresSafeArea()
 
@@ -166,6 +168,39 @@ struct MapTabView: View {
                 if let result = explorationManager.lastExplorationResult {
                     ExplorationResultView(result: result)
                 }
+            }
+            // Day 22: POI 搜刮结果弹窗
+            .sheet(isPresented: $explorationManager.showScavengeResult) {
+                ScavengeResultView(
+                    poiName: explorationManager.lastScavengedPOIName,
+                    items: explorationManager.lastScavengeItems,
+                    onConfirm: {
+                        explorationManager.dismissScavengeResult()
+                    }
+                )
+                .presentationDetents([.medium])
+            }
+
+            // Day 22: POI 接近弹窗（从底部弹出）
+            if explorationManager.showPOIPopup, let poi = explorationManager.currentProximityPOI {
+                VStack {
+                    Spacer()
+                    POIProximityPopup(
+                        poi: poi,
+                        distance: explorationManager.distanceToPOI(poi),
+                        onScavenge: {
+                            Task {
+                                await explorationManager.scavengePOI(poi)
+                            }
+                        },
+                        onDismiss: {
+                            explorationManager.dismissPOIPopup()
+                        }
+                    )
+                }
+                .transition(.move(edge: .bottom))
+                .animation(.spring(response: 0.3, dampingFraction: 0.8), value: explorationManager.showPOIPopup)
+                .zIndex(100)
             }
 
             // 左上角坐标显示（调试用）

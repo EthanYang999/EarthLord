@@ -120,6 +120,29 @@ final class ExplorationManager: ObservableObject {
     /// 是否正在保存
     @Published private(set) var isSaving: Bool = false
 
+    // MARK: - POI 相关属性 (Day 22)
+
+    /// 当前探索发现的 POI 列表
+    @Published private(set) var discoveredPOIs: [POI] = []
+
+    /// 是否显示 POI 接近弹窗
+    @Published var showPOIPopup: Bool = false
+
+    /// 当前接近的 POI
+    @Published private(set) var currentProximityPOI: POI?
+
+    /// 已搜刮的 POI ID 集合
+    @Published private(set) var scavengedPOIIds: Set<String> = []
+
+    /// 最近搜刮获得的物品（用于显示结果）
+    @Published private(set) var lastScavengeItems: [GeneratedRewardItem] = []
+
+    /// 最近搜刮的 POI 名称
+    @Published private(set) var lastScavengedPOIName: String = ""
+
+    /// 是否显示搜刮结果
+    @Published var showScavengeResult: Bool = false
+
     // MARK: - Private Properties
 
     /// 起始位置
@@ -152,6 +175,20 @@ final class ExplorationManager: ObservableObject {
         set { UserDefaults.standard.set(newValue, forKey: "exploration_total_area") }
     }
 
+    // MARK: - POI 围栏管理 (Day 22)
+
+    /// 围栏管理器（独立的 CLLocationManager 用于围栏监控）
+    private var geofenceManager: CLLocationManager?
+
+    /// 围栏代理
+    private var geofenceDelegate: GeofenceDelegate?
+
+    /// 当前监控的围栏区域
+    private var monitoredRegions: [String: CLCircularRegion] = [:]
+
+    /// 保存的 LocationManager 引用
+    private weak var activeLocationManager: LocationManager?
+
     // MARK: - Initialization
 
     private init() {}
@@ -178,8 +215,16 @@ final class ExplorationManager: ObservableObject {
 
         print("[ExplorationManager] 🚀 开始探索，等待位置更新...")
 
+        // 保存 LocationManager 引用
+        activeLocationManager = locationManager
+
         // 创建数据库记录
         await createExplorationSession()
+
+        // Day 22: 搜索附近 POI 并设置围栏
+        if let location = locationManager.userLocation {
+            await searchAndSetupPOIs(at: location)
+        }
 
         // 订阅位置更新
         locationSubscription = locationManager.$userLocation
@@ -264,10 +309,14 @@ final class ExplorationManager: ObservableObject {
         totalHistoryDistance += currentDistance
         totalHistoryArea += exploredArea
 
+        // Day 22: 清理 POI 和围栏
+        clearPOIs()
+
         // 重置状态
         isExploring = false
         isSaving = false
         currentSessionId = nil
+        activeLocationManager = nil
 
         print("[ExplorationManager] ⏹️ 探索结束，行走 \(String(format: "%.0f", currentDistance))m，获得 \(obtainedItems.count) 件物品，等级: \(tier.displayName)")
 
@@ -295,6 +344,9 @@ final class ExplorationManager: ObservableObject {
             await updateSessionStatus(sessionId: sessionId, status: "cancelled")
         }
 
+        // Day 22: 清理 POI 和围栏
+        clearPOIs()
+
         isExploring = false
         currentDistance = 0
         startTime = nil
@@ -304,6 +356,7 @@ final class ExplorationManager: ObservableObject {
         startLocation = nil
         lastLocation = nil
         lastLocationTimestamp = nil
+        activeLocationManager = nil
 
         print("[ExplorationManager] ❌ 探索已取消（可能因超速或用户取消）")
     }
@@ -552,5 +605,257 @@ extension ExplorationManager {
         } else {
             return String(format: "%.0f m", meters)
         }
+    }
+}
+
+// MARK: - POI 搜刮功能 (Day 22)
+
+extension ExplorationManager {
+
+    /// 搜索附近 POI 并设置围栏
+    private func searchAndSetupPOIs(at location: CLLocationCoordinate2D) async {
+        print("[ExplorationManager] 🔍 开始搜索附近 POI...")
+
+        // 使用 POISearchManager 搜索
+        let pois = await POISearchManager.shared.searchNearbyPOIs(at: location)
+
+        // 更新 POI 列表
+        discoveredPOIs = pois
+        scavengedPOIIds = []
+
+        print("[ExplorationManager] 📍 发现 \(pois.count) 个 POI")
+
+        // 设置地理围栏
+        setupGeofences(for: pois)
+    }
+
+    /// 为 POI 创建地理围栏
+    private func setupGeofences(for pois: [POI]) {
+        // 创建围栏管理器
+        geofenceDelegate = GeofenceDelegate { [weak self] region in
+            Task { @MainActor in
+                self?.handleEnterRegion(region)
+            }
+        }
+
+        geofenceManager = CLLocationManager()
+        geofenceManager?.delegate = geofenceDelegate
+        geofenceManager?.allowsBackgroundLocationUpdates = false
+
+        // 清除现有围栏
+        for region in monitoredRegions.values {
+            geofenceManager?.stopMonitoring(for: region)
+        }
+        monitoredRegions.removeAll()
+
+        // 为每个 POI 创建围栏（最多 20 个）
+        let poisToMonitor = Array(pois.prefix(20))
+
+        for poi in poisToMonitor {
+            let region = CLCircularRegion(
+                center: poi.coordinate,
+                radius: POISearchManager.triggerRadius,
+                identifier: poi.id
+            )
+            region.notifyOnEntry = true
+            region.notifyOnExit = false
+
+            geofenceManager?.startMonitoring(for: region)
+            monitoredRegions[poi.id] = region
+
+            print("[ExplorationManager] 🎯 创建围栏: \(poi.name) (ID: \(poi.id))")
+        }
+
+        print("[ExplorationManager] ✅ 已设置 \(poisToMonitor.count) 个围栏")
+    }
+
+    /// 处理进入围栏事件
+    func handleEnterRegion(_ region: CLRegion) {
+        guard isExploring else { return }
+
+        let poiId = region.identifier
+
+        // 检查是否已搜刮
+        guard !scavengedPOIIds.contains(poiId) else {
+            print("[ExplorationManager] ℹ️ POI 已搜刮过: \(poiId)")
+            return
+        }
+
+        // 查找对应的 POI
+        guard let poi = discoveredPOIs.first(where: { $0.id == poiId }) else {
+            print("[ExplorationManager] ⚠️ 未找到 POI: \(poiId)")
+            return
+        }
+
+        print("[ExplorationManager] 🏠 进入 POI 范围: \(poi.name)")
+
+        // 设置当前接近的 POI 并显示弹窗
+        currentProximityPOI = poi
+        showPOIPopup = true
+
+        // 震动提示
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.prepare()
+        generator.impactOccurred()
+    }
+
+    /// 执行搜刮
+    /// - Parameter poi: 要搜刮的 POI
+    /// - Returns: 获得的物品列表
+    func scavengePOI(_ poi: POI) async -> [GeneratedRewardItem] {
+        print("[ExplorationManager] 🔦 开始搜刮: \(poi.name)")
+
+        // 确保物品定义已加载
+        let inventoryManager = InventoryManager.shared
+        if inventoryManager.itemDefinitions.isEmpty {
+            await inventoryManager.loadItemDefinitions()
+        }
+
+        // 随机生成 1-3 件物品
+        let itemCount = Int.random(in: 1...3)
+        let availableItems = Array(inventoryManager.itemDefinitions.values)
+
+        guard !availableItems.isEmpty else {
+            print("[ExplorationManager] ⚠️ 没有可用的物品定义")
+            return []
+        }
+
+        var generatedItems: [GeneratedRewardItem] = []
+
+        for _ in 0..<itemCount {
+            // 随机选择物品
+            guard let item = availableItems.randomElement() else { continue }
+
+            // 随机数量 1-3
+            let quantity = Int.random(in: 1...3)
+
+            // 随机品质
+            let qualities = ["normal", "good", "worn"]
+            let quality = item.hasQuality ? qualities.randomElement() : nil
+
+            let reward = GeneratedRewardItem(
+                itemId: item.id,
+                itemName: item.name,
+                quantity: quantity,
+                quality: quality,
+                rarity: item.rarity
+            )
+
+            generatedItems.append(reward)
+
+            // 添加到背包
+            let success = await inventoryManager.addItem(
+                itemId: item.id,
+                quantity: quantity,
+                quality: quality
+            )
+
+            if success {
+                print("[ExplorationManager] ✅ 搜刮获得: \(item.name) x\(quantity)")
+            }
+        }
+
+        // 标记 POI 为已搜刮
+        scavengedPOIIds.insert(poi.id)
+
+        // 关闭接近弹窗
+        showPOIPopup = false
+        currentProximityPOI = nil
+
+        // 保存搜刮结果用于显示
+        lastScavengeItems = generatedItems
+        lastScavengedPOIName = poi.name
+        showScavengeResult = true
+
+        // 成功震动
+        let generator = UINotificationFeedbackGenerator()
+        generator.prepare()
+        generator.notificationOccurred(.success)
+
+        print("[ExplorationManager] 🎉 搜刮完成，获得 \(generatedItems.count) 件物品")
+
+        return generatedItems
+    }
+
+    /// 关闭 POI 弹窗（稍后再说）
+    func dismissPOIPopup() {
+        showPOIPopup = false
+        currentProximityPOI = nil
+    }
+
+    /// 关闭搜刮结果
+    func dismissScavengeResult() {
+        showScavengeResult = false
+        lastScavengeItems = []
+        lastScavengedPOIName = ""
+    }
+
+    /// 清理 POI 和围栏
+    private func clearPOIs() {
+        print("[ExplorationManager] 🧹 清理 POI 和围栏")
+
+        // 停止所有围栏监控
+        for region in monitoredRegions.values {
+            geofenceManager?.stopMonitoring(for: region)
+        }
+        monitoredRegions.removeAll()
+
+        // 释放围栏管理器
+        geofenceManager?.delegate = nil
+        geofenceManager = nil
+        geofenceDelegate = nil
+
+        // 清空 POI 数据
+        discoveredPOIs = []
+        scavengedPOIIds = []
+        currentProximityPOI = nil
+        showPOIPopup = false
+        showScavengeResult = false
+        lastScavengeItems = []
+        lastScavengedPOIName = ""
+    }
+
+    /// 计算用户当前位置到 POI 的距离
+    func distanceToPOI(_ poi: POI) -> CLLocationDistance? {
+        guard let userLocation = activeLocationManager?.userLocation else {
+            return nil
+        }
+
+        let userLoc = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
+        let poiLoc = CLLocation(latitude: poi.coordinate.latitude, longitude: poi.coordinate.longitude)
+
+        return userLoc.distance(from: poiLoc)
+    }
+}
+
+// MARK: - Geofence Delegate
+
+/// 围栏代理类
+/// 用于接收地理围栏事件
+class GeofenceDelegate: NSObject, CLLocationManagerDelegate {
+
+    /// 进入围栏回调
+    private let onEnterRegion: (CLRegion) -> Void
+
+    init(onEnterRegion: @escaping (CLRegion) -> Void) {
+        self.onEnterRegion = onEnterRegion
+        super.init()
+    }
+
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        print("[GeofenceDelegate] 📍 进入围栏: \(region.identifier)")
+        onEnterRegion(region)
+    }
+
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+        print("[GeofenceDelegate] 🚶 离开围栏: \(region.identifier)")
+    }
+
+    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+        print("[GeofenceDelegate] ❌ 围栏监控失败: \(region?.identifier ?? "unknown") - \(error.localizedDescription)")
+    }
+
+    func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
+        print("[GeofenceDelegate] ✅ 开始监控围栏: \(region.identifier)")
     }
 }
