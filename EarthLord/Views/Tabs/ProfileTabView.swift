@@ -10,6 +10,7 @@ import Supabase
 
 struct ProfileTabView: View {
     @EnvironmentObject var authManager: AuthManager
+    @ObservedObject var languageManager = LanguageManager.shared
 
     /// 是否显示退出确认弹窗
     @State private var showSignOutAlert = false
@@ -29,6 +30,9 @@ struct ProfileTabView: View {
 
                     // 统计数据
                     statsSection
+
+                    // 功能列表
+                    settingsSection
 
                     // 功能列表
                     menuSection
@@ -162,8 +166,6 @@ struct ProfileTabView: View {
     // MARK: - 功能列表
     private var menuSection: some View {
         VStack(spacing: 0) {
-            menuItem(icon: "gearshape.fill", title: "设置", color: .gray)
-            Divider().background(ApocalypseTheme.textMuted.opacity(0.3))
             menuItem(icon: "bell.fill", title: "通知", color: .orange)
             Divider().background(ApocalypseTheme.textMuted.opacity(0.3))
             menuItem(icon: "questionmark.circle.fill", title: "帮助", color: .blue)
@@ -172,6 +174,86 @@ struct ProfileTabView: View {
         }
         .background(ApocalypseTheme.cardBackground)
         .cornerRadius(16)
+    }
+
+    // MARK: - 设置
+    private var settingsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("设置")
+                .font(.headline)
+                .foregroundColor(ApocalypseTheme.textPrimary)
+
+            VStack(spacing: 0) {
+                NavigationLink {
+                    LanguageSettingsView()
+                } label: {
+                    HStack {
+                        Image(systemName: "globe")
+                            .font(.title3)
+                            .foregroundColor(.orange)
+                            .frame(width: 30)
+
+                        Text("语言")
+                            .foregroundColor(ApocalypseTheme.textPrimary)
+
+                        Spacer()
+
+                        Text(languageManager.selectedLanguage.displayName)
+                            .font(.caption)
+                            .foregroundColor(ApocalypseTheme.textSecondary)
+
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(ApocalypseTheme.textMuted)
+                    }
+                    .padding()
+                }
+
+                Divider().background(ApocalypseTheme.textMuted.opacity(0.3))
+
+                Link(destination: URL(string: "https://ethanyang999.github.io/earthlord-support/support/")!) {
+                    HStack {
+                        Image(systemName: "questionmark.circle")
+                            .font(.title3)
+                            .foregroundColor(.orange)
+                            .frame(width: 30)
+
+                        Text("技术支持")
+                            .foregroundColor(ApocalypseTheme.textPrimary)
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(ApocalypseTheme.textMuted)
+                    }
+                    .padding()
+                }
+
+                Divider().background(ApocalypseTheme.textMuted.opacity(0.3))
+
+                Link(destination: URL(string: "https://ethanyang999.github.io/earthlord-support/privacy/")!) {
+                    HStack {
+                        Image(systemName: "hand.raised.fill")
+                            .font(.title3)
+                            .foregroundColor(.orange)
+                            .frame(width: 30)
+
+                        Text("隐私政策")
+                            .foregroundColor(ApocalypseTheme.textPrimary)
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(ApocalypseTheme.textMuted)
+                    }
+                    .padding()
+                }
+            }
+            .background(ApocalypseTheme.cardBackground)
+            .cornerRadius(16)
+        }
     }
 
     private func menuItem(icon: String, title: LocalizedStringKey, color: Color) -> some View {

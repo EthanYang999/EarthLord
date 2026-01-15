@@ -7,6 +7,8 @@
 //
 
 import Foundation
+internal import Functions
+import Supabase
 
 // MARK: - AI 生成结果
 

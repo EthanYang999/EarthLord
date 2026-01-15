@@ -38,20 +38,6 @@ struct MoreTabView: View {
                     }
                 }
 
-                // 设置
-                Section("设置") {
-                    NavigationLink {
-                        LanguageSettingsView()
-                    } label: {
-                        HStack {
-                            Label("语言", systemImage: "globe")
-                            Spacer()
-                            Text(languageManager.selectedLanguage.displayName)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
-
                 // 开发者工具
                 Section("开发者工具") {
                     NavigationLink {
