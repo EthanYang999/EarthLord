@@ -220,6 +220,31 @@ class TerritoryManager: ObservableObject {
         }
     }
 
+    /// 更新领地名称
+    /// - Parameters:
+    ///   - territoryId: 领地 ID
+    ///   - newName: 新名称
+    /// - Returns: 是否更新成功
+    func updateTerritoryName(territoryId: String, newName: String) async -> Bool {
+        do {
+            struct NameUpdate: Encodable {
+                let name: String
+            }
+
+            try await supabase
+                .from("territories")
+                .update(NameUpdate(name: newName))
+                .eq("id", value: territoryId)
+                .execute()
+
+            TerritoryLogger.shared.log("领地重命名成功: \(newName)", type: .success)
+            return true
+        } catch {
+            TerritoryLogger.shared.log("领地重命名失败: \(error.localizedDescription)", type: .error)
+            return false
+        }
+    }
+
     // MARK: - 碰撞检测算法
 
     /// 射线法判断点是否在多边形内
@@ -430,4 +455,13 @@ enum TerritoryError: LocalizedError {
             return "上传失败: \(message)"
         }
     }
+}
+
+// MARK: - 领地相关通知
+
+extension Notification.Name {
+    /// 领地数据已更新（上传、重命名等）
+    static let territoryUpdated = Notification.Name("territoryUpdated")
+    /// 领地已删除
+    static let territoryDeleted = Notification.Name("territoryDeleted")
 }

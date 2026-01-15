@@ -9,6 +9,7 @@
 import Foundation
 import Combine
 import Supabase
+import CoreLocation
 
 /// 建筑管理器
 /// 负责管理玩家建筑的建造、升级和状态维护
@@ -43,9 +44,35 @@ final class BuildingManager: ObservableObject {
     /// 建造计时器
     private var constructionTimers: [UUID: Timer] = [:]
 
+    /// 全局刷新定时器（每秒刷新UI以更新倒计时）
+    private var refreshTimer: Timer?
+
     // MARK: - Initialization
 
-    private init() {}
+    private init() {
+        startRefreshTimer()
+    }
+
+    deinit {
+        refreshTimer?.invalidate()
+        // 直接在 deinit 中清理计时器，避免调用 MainActor 方法
+        for (_, timer) in constructionTimers {
+            timer.invalidate()
+        }
+        constructionTimers.removeAll()
+    }
+
+    // MARK: - Refresh Timer
+
+    /// 启动全局刷新定时器
+    private func startRefreshTimer() {
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let manager = self else { return }
+            Task { @MainActor in
+                manager.objectWillChange.send()
+            }
+        }
+    }
 
     // MARK: - Template Loading
 
@@ -169,6 +196,17 @@ final class BuildingManager: ObservableObject {
     }
 
     // MARK: - Start Construction
+
+    /// 使用建造请求开始建造
+    /// - Parameter request: 建造请求
+    /// - Returns: 新创建的建筑
+    func startConstruction(request: BuildingConstructionRequest) async throws -> PlayerBuilding {
+        return try await startConstruction(
+            templateId: request.templateId,
+            territoryId: request.territoryId,
+            location: (lat: request.location.latitude, lon: request.location.longitude)
+        )
+    }
 
     /// 开始建造建筑
     /// - Parameters:
@@ -426,6 +464,45 @@ final class BuildingManager: ObservableObject {
         }
     }
 
+    // MARK: - Demolish Building
+
+    /// 拆除建筑
+    /// - Parameter buildingId: 建筑ID
+    /// - Returns: 是否成功
+    func demolishBuilding(buildingId: UUID) async throws {
+        // 1. 检查用户登录状态
+        guard let _ = try? await client.auth.session.user.id else {
+            throw BuildingError.notAuthenticated
+        }
+
+        // 2. 查找建筑
+        guard let building = playerBuildings.first(where: { $0.id == buildingId }) else {
+            throw BuildingError.buildingNotFound
+        }
+
+        // 3. 检查状态：只有 active 才能拆除
+        guard building.status == .active else {
+            throw BuildingError.invalidStatus
+        }
+
+        // 4. 删除数据库记录
+        do {
+            try await client
+                .from("player_buildings")
+                .delete()
+                .eq("id", value: buildingId.uuidString)
+                .execute()
+
+            print("[BuildingManager] ✅ 已拆除建筑: \(building.buildingName)")
+
+            // 5. 刷新建筑列表
+            await fetchPlayerBuildings(territoryId: building.territoryId)
+
+        } catch {
+            throw BuildingError.databaseError(error.localizedDescription)
+        }
+    }
+
     // MARK: - Fetch Buildings
 
     /// 获取玩家在指定领地的建筑
@@ -529,8 +606,9 @@ final class BuildingManager: ObservableObject {
 
         // 创建计时器
         let timer = Timer.scheduledTimer(withTimeInterval: remainingTime, repeats: false) { [weak self] _ in
+            guard let manager = self else { return }
             Task { @MainActor in
-                try? await self?.completeConstruction(buildingId: building.id)
+                try? await manager.completeConstruction(buildingId: building.id)
             }
         }
 
@@ -553,5 +631,39 @@ final class BuildingManager: ObservableObject {
         }
         constructionTimers.removeAll()
         print("[BuildingManager] ⏱️ 已停止所有计时器")
+    }
+
+    // MARK: - Location Validation
+
+    /// 检查位置是否在领地多边形内（射线法）
+    /// - Parameters:
+    ///   - point: 要检查的坐标点
+    ///   - polygon: 领地边界点数组
+    /// - Returns: 是否在多边形内
+    func isPointInPolygon(_ point: CLLocationCoordinate2D, polygon: [CLLocationCoordinate2D]) -> Bool {
+        guard polygon.count >= 3 else { return false }
+
+        var isInside = false
+        var j = polygon.count - 1
+
+        for i in 0..<polygon.count {
+            let xi = polygon[i].longitude
+            let yi = polygon[i].latitude
+            let xj = polygon[j].longitude
+            let yj = polygon[j].latitude
+
+            if ((yi > point.latitude) != (yj > point.latitude)) &&
+               (point.longitude < (xj - xi) * (point.latitude - yi) / (yj - yi) + xi) {
+                isInside = !isInside
+            }
+            j = i
+        }
+
+        return isInside
+    }
+
+    /// 获取模板（别名方法，用于视图层）
+    func getTemplate(for templateId: String) -> BuildingTemplate? {
+        return buildingTemplates[templateId]
     }
 }

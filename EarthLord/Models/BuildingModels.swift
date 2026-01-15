@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import CoreLocation
 
 // MARK: - 建筑分类
 
@@ -55,20 +56,29 @@ enum BuildingCategory: String, Codable, CaseIterable {
 enum BuildingStatus: String, Codable {
     case constructing = "constructing"  // 建造中
     case active = "active"              // 运行中
+    case upgrading = "upgrading"        // 升级中
+    case damaged = "damaged"            // 已损坏
+    case inactive = "inactive"          // 已停用
 
     /// 显示名称
     var displayName: String {
         switch self {
         case .constructing: return "建造中"
         case .active: return "运行中"
+        case .upgrading: return "升级中"
+        case .damaged: return "已损坏"
+        case .inactive: return "已停用"
         }
     }
 
     /// 状态颜色
     var color: Color {
         switch self {
-        case .constructing: return .blue
+        case .constructing: return .orange
         case .active: return .green
+        case .upgrading: return .blue
+        case .damaged: return .red
+        case .inactive: return .gray
         }
     }
 }
@@ -189,6 +199,22 @@ struct PlayerBuilding: Codable, Identifiable {
             return "\(hours)小时\(minutes)分"
         }
     }
+
+    /// 建筑坐标
+    var coordinate: CLLocationCoordinate2D? {
+        guard let lat = locationLat, let lon = locationLon else { return nil }
+        return CLLocationCoordinate2D(latitude: lat, longitude: lon)
+    }
+
+    /// 建造进度（0.0 ~ 1.0）
+    var buildProgress: Double {
+        guard status == .constructing || status == .upgrading,
+              let completedAt = buildCompletedAt else { return 0 }
+
+        let total = completedAt.timeIntervalSince(buildStartedAt)
+        let elapsed = Date().timeIntervalSince(buildStartedAt)
+        return min(1.0, max(0, elapsed / total))
+    }
 }
 
 // MARK: - 插入玩家建筑请求
@@ -255,6 +281,23 @@ struct UpdatePlayerBuilding: Codable {
     }
 }
 
+// MARK: - 建造请求
+
+/// 建造请求模型
+struct BuildingConstructionRequest {
+    let templateId: String
+    let territoryId: String
+    let location: CLLocationCoordinate2D  // 建筑位置（必需！）
+    let customName: String?               // 自定义名称（可选）
+
+    init(templateId: String, territoryId: String, location: CLLocationCoordinate2D, customName: String? = nil) {
+        self.templateId = templateId
+        self.territoryId = territoryId
+        self.location = location
+        self.customName = customName
+    }
+}
+
 // MARK: - 建筑错误
 
 /// 建筑错误枚举
@@ -266,6 +309,8 @@ enum BuildingError: LocalizedError {
     case maxLevelReached                        // 已达最大等级
     case invalidStatus                          // 状态不对（如建造中不能升级）
     case buildingNotFound                       // 建筑不存在
+    case locationRequired                       // 未选择位置
+    case locationOutOfBounds                    // 位置超出领地范围
     case databaseError(String)                  // 数据库错误
 
     var errorDescription: String? {
@@ -285,6 +330,10 @@ enum BuildingError: LocalizedError {
             return "只能升级运行中的建筑"
         case .buildingNotFound:
             return "建筑不存在"
+        case .locationRequired:
+            return "请先选择建筑位置"
+        case .locationOutOfBounds:
+            return "选择的位置超出领地范围"
         case .databaseError(let message):
             return "数据库错误: \(message)"
         }
