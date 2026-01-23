@@ -177,6 +177,11 @@ struct BackpackContentView: View {
     /// 是否已加载
     @State private var hasLoaded = false
 
+    #if DEBUG
+    /// 开发者操作中
+    @State private var isDevOperating = false
+    #endif
+
     private let maxCapacity: Double = 100.0
 
     private var usedCapacity: Double {
@@ -253,6 +258,11 @@ struct BackpackContentView: View {
             ScrollView {
                 VStack(spacing: 16) {
                     capacityCard
+
+                    #if DEBUG
+                    developerSection
+                    #endif
+
                     searchAndFilter
                     itemList
                 }
@@ -337,6 +347,83 @@ struct BackpackContentView: View {
         .background(ApocalypseTheme.cardBackground)
         .cornerRadius(12)
     }
+
+    #if DEBUG
+    /// 开发者测试区域
+    private var developerSection: some View {
+        VStack(spacing: 12) {
+            HStack {
+                Image(systemName: "hammer.fill")
+                    .font(.title3)
+                    .foregroundColor(.orange)
+
+                Text("开发者工具")
+                    .font(.headline)
+                    .foregroundColor(ApocalypseTheme.textPrimary)
+
+                Spacer()
+            }
+
+            HStack(spacing: 12) {
+                // 添加测试资源
+                Button {
+                    Task {
+                        isDevOperating = true
+                        _ = await inventoryManager.addTestResources()
+                        isDevOperating = false
+                    }
+                } label: {
+                    HStack {
+                        if isDevOperating {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        } else {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                        Text("添加测试资源")
+                            .font(.subheadline)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(ApocalypseTheme.success)
+                    .cornerRadius(8)
+                }
+                .disabled(isDevOperating)
+
+                // 清空背包
+                Button {
+                    Task {
+                        isDevOperating = true
+                        _ = await inventoryManager.clearAllItems()
+                        isDevOperating = false
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: "trash.fill")
+                        Text("清空背包")
+                            .font(.subheadline)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(ApocalypseTheme.danger)
+                    .cornerRadius(8)
+                }
+                .disabled(isDevOperating)
+
+                Spacer()
+            }
+        }
+        .padding()
+        .background(Color.orange.opacity(0.1))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+        )
+        .cornerRadius(12)
+    }
+    #endif
 
     private var searchAndFilter: some View {
         VStack(spacing: 12) {

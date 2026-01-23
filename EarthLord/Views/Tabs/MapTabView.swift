@@ -23,6 +23,9 @@ struct MapTabView: View {
     /// 领地管理器
     private let territoryManager = TerritoryManager.shared
 
+    /// Day 26: 建筑管理器
+    @ObservedObject private var buildingManager = BuildingManager.shared
+
     /// 已加载的领地数据
     @State private var territories: [Territory] = []
 
@@ -71,7 +74,7 @@ struct MapTabView: View {
 
     var body: some View {
         ZStack {
-            // 地图视图（包含轨迹渲染和领地显示）
+            // 地图视图（包含轨迹渲染、领地显示和建筑标记）
             MapViewRepresentable(
                 userLocation: $userLocation,
                 hasLocatedUser: $hasLocatedUser,
@@ -82,7 +85,9 @@ struct MapTabView: View {
                 territories: territories,
                 currentUserId: authManager.currentUser?.id.uuidString,
                 pois: explorationManager.discoveredPOIs,
-                scavengedPOIIds: explorationManager.scavengedPOIIds
+                scavengedPOIIds: explorationManager.scavengedPOIIds,
+                buildings: buildingManager.playerBuildings,
+                buildingTemplates: buildingManager.getAllTemplates()
             )
             .ignoresSafeArea()
 
@@ -223,6 +228,12 @@ struct MapTabView: View {
             // 加载已保存的领地
             Task {
                 await loadTerritories()
+            }
+
+            // Day 26: 加载建筑数据
+            buildingManager.loadTemplates()
+            Task {
+                await buildingManager.fetchAllPlayerBuildings()
             }
         }
         // 监听速度警告变化

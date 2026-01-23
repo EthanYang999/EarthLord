@@ -378,4 +378,62 @@ final class InventoryManager: ObservableObject {
         default: return nil
         }
     }
+
+    // MARK: - 开发者测试方法
+
+    #if DEBUG
+    /// 添加测试资源（用于建造系统测试）
+    /// 添加 木材、石头、废金属、玻璃 各若干
+    func addTestResources() async -> Bool {
+        let testResources: [(id: String, name: String, quantity: Int)] = [
+            ("79d5cc71-d98a-46ef-9a4b-4a7d7c1c0495", "木材", 200),
+            ("419e6e21-dc02-4bd4-94bb-1fcb9c08f738", "石头", 150),
+            ("dd722a71-ba35-4cf8-92d3-356bc10f0b35", "废金属", 100),
+            ("de93eab2-daa0-43dc-b33a-1f21496ebc31", "玻璃", 50)
+        ]
+
+        var allSuccess = true
+        for resource in testResources {
+            guard let uuid = UUID(uuidString: resource.id) else {
+                print("[InventoryManager] ❌ 无效的UUID: \(resource.id)")
+                allSuccess = false
+                continue
+            }
+
+            let success = await addItem(itemId: uuid, quantity: resource.quantity, quality: nil)
+            if success {
+                print("[InventoryManager] ✅ 添加测试资源: \(resource.name) x\(resource.quantity)")
+            } else {
+                print("[InventoryManager] ❌ 添加测试资源失败: \(resource.name)")
+                allSuccess = false
+            }
+        }
+
+        return allSuccess
+    }
+
+    /// 清空所有背包物品
+    func clearAllItems() async -> Bool {
+        guard let userId = try? await client.auth.session.user.id else {
+            print("[InventoryManager] ⚠️ 用户未登录")
+            return false
+        }
+
+        do {
+            try await client
+                .from("inventory_items")
+                .delete()
+                .eq("user_id", value: userId.uuidString)
+                .execute()
+
+            self.inventoryItems = []
+            print("[InventoryManager] ✅ 清空所有背包物品")
+            return true
+        } catch {
+            print("[InventoryManager] ❌ 清空背包失败: \(error)")
+            self.errorMessage = "清空背包失败"
+            return false
+        }
+    }
+    #endif
 }
