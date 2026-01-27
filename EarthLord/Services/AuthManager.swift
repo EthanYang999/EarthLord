@@ -381,8 +381,8 @@ class AuthManager: ObservableObject {
 
         do {
             // 1. 获取当前窗口场景的根视图控制器
-            guard let windowScene = await UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                  let rootViewController = await windowScene.windows.first?.rootViewController else {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let rootViewController = windowScene.windows.first?.rootViewController else {
                 throw AuthError.custom("无法获取根视图控制器")
             }
 

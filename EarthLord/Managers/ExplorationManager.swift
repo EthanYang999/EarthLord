@@ -492,8 +492,8 @@ final class ExplorationManager: ObservableObject {
             return
         }
 
-        // 构建奖励物品 JSON
-        let itemsJson: [[String: Any]] = rewards.map { reward in
+        // 构建奖励物品 JSON（预留给后续使用）
+        _ = rewards.map { reward in
             var item: [String: Any] = [
                 "item_id": reward.itemId.uuidString,
                 "item_name": reward.itemName,
@@ -741,7 +741,7 @@ extension ExplorationManager {
         }
 
         // 添加物品到背包（AI 生成的物品使用虚拟 UUID）
-        let inventoryManager = InventoryManager.shared
+        _ = InventoryManager.shared
         for item in generatedItems {
             // AI 物品暂时不添加到背包（因为没有对应的物品定义 ID）
             // 后续可以扩展为动态创建物品定义
