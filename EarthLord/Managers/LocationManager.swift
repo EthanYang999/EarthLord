@@ -13,6 +13,10 @@ import Combine
 /// 负责请求定位权限、获取用户位置、处理授权状态变化、路径追踪
 class LocationManager: NSObject, ObservableObject {
 
+    // MARK: - Singleton (Day 35)
+
+    static let shared = LocationManager()
+
     // MARK: - Published Properties
 
     /// 用户当前位置坐标
@@ -134,6 +138,7 @@ class LocationManager: NSObject, ObservableObject {
 
     /// 请求定位权限
     func requestPermission() {
+        print("🔔 [LocationManager] 正在请求定位权限...")
         locationManager.requestWhenInUseAuthorization()
     }
 
@@ -150,14 +155,20 @@ class LocationManager: NSObject, ObservableObject {
 
     /// 检查并请求权限，如果已授权则开始定位
     func checkAndRequestPermission() {
+        print("🔍 [LocationManager] 检查定位权限状态: \(authorizationStatus.rawValue)")
+
         switch authorizationStatus {
         case .notDetermined:
+            print("❓ [LocationManager] 权限未确定，将请求权限")
             requestPermission()
         case .authorizedWhenInUse, .authorizedAlways:
+            print("✅ [LocationManager] 权限已授予，开始定位")
             startUpdatingLocation()
         case .denied, .restricted:
+            print("❌ [LocationManager] 权限被拒绝或受限")
             locationError = "定位权限被拒绝，请在设置中开启"
         @unknown default:
+            print("⚠️ [LocationManager] 未知的权限状态")
             break
         }
     }
@@ -639,6 +650,10 @@ extension LocationManager: CLLocationManagerDelegate {
             self.currentLocation = location
 
             self.locationError = nil
+
+            // 调试日志
+            print("📍 [LocationManager] 位置更新成功: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+            print("📍 [LocationManager] 精度: \(location.horizontalAccuracy)m")
         }
     }
 

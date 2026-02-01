@@ -17,5 +17,11 @@
 	</array>
 	<key>GIDClientID</key>
 	<string>724126215320-jnfs4sron7qpm5j5cckmjn0e23o8ojjj.apps.googleusercontent.com</string>
+
+	<!-- 定位权限说明 -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>需要获取您的位置来实现圈地、通讯距离过滤等功能</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>需要获取您的位置来实现圈地、通讯距离过滤等功能</string>
 </dict>
 </plist>

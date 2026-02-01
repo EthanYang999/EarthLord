@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct MainTabView: View {
     @State private var selectedTab = 0
 
-    /// 定位管理器（全局共享）
-    @StateObject private var locationManager = LocationManager()
+    /// 定位管理器（使用单例，Day 35）
+    @ObservedObject private var locationManager = LocationManager.shared
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -60,6 +61,13 @@ struct MainTabView: View {
         .tint(ApocalypseTheme.primary)
         // 注入 LocationManager 供子视图使用
         .environmentObject(locationManager)
+        .onAppear {
+            // 应用启动时立即请求定位权限（通讯距离过滤需要）
+            print("🔔 [MainTabView] 应用启动，准备请求定位权限")
+            print("📍 [MainTabView] 当前权限状态: \(locationManager.authorizationStatus.rawValue)")
+            print("📍 [MainTabView] 当前位置: \(locationManager.userLocation?.latitude ?? 0), \(locationManager.userLocation?.longitude ?? 0)")
+            locationManager.checkAndRequestPermission()
+        }
     }
 }
 
