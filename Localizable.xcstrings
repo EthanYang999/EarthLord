@@ -4,10 +4,7 @@
     "" : {
 
     },
-    "·" : {
-
-    },
-    "（可选）" : {
+    "\"%@\"" : {
 
     },
     "/" : {
@@ -15,6 +12,16 @@
     },
     "#%lld" : {
 
+    },
+    "%@ ×%lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ ×%2$lld"
+          }
+        }
+      }
     },
     "%lld" : {
       "localizations" : {
@@ -38,31 +45,92 @@
     "%lld 分钟" : {
 
     },
-    "%lld 成员" : {
-
-    },
     "%lld 点" : {
 
     },
-    "%lld/50" : {
-
-    },
-    "%lld/200" : {
-
+    "%lld 种" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld types"
+          }
+        }
+      }
     },
     "%lld%%" : {
 
     },
+    "×%lld" : {
+
+    },
+    "1 周" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Week"
+          }
+        }
+      }
+    },
+    "1 天" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Day"
+          }
+        }
+      }
+    },
+    "1 小时" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Hour"
+          }
+        }
+      }
+    },
+    "3 天" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 Days"
+          }
+        }
+      }
+    },
+    "6 小时" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 Hours"
+          }
+        }
+      }
+    },
+    "12 小时" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "12 Hours"
+          }
+        }
+      }
+    },
     "AI" : {
-
-    },
-    "Day 33 实现" : {
-
-    },
-    "Day 34 实现" : {
-
-    },
-    "Day 36 实现" : {
 
     },
     "EARTH LORD" : {
@@ -113,6 +181,16 @@
     "x%lld" : {
 
     },
+    "与玩家的交易" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trade with Player"
+          }
+        }
+      }
+    },
     "两次输入的密码不一致" : {
       "localizations" : {
         "en" : {
@@ -134,10 +212,114 @@
       }
     },
     "交易" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trade"
+          }
+        }
+      }
     },
-    "仅接收" : {
-
+    "交易失败" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trade Failed"
+          }
+        }
+      }
+    },
+    "交易已完成" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trade Completed"
+          }
+        }
+      }
+    },
+    "交易市场" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trade Market"
+          }
+        }
+      }
+    },
+    "交易成功！" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trade Successful!"
+          }
+        }
+      }
+    },
+    "你将获得" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You'll Receive"
+          }
+        }
+      }
+    },
+    "你的挂单已发布，等待其他玩家接受" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your offer has been published, waiting for other players to accept"
+          }
+        }
+      }
+    },
+    "你的评价:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Rating:"
+          }
+        }
+      }
+    },
+    "你给出:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You Gave:"
+          }
+        }
+      }
+    },
+    "你获得:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You Received:"
+          }
+        }
+      }
+    },
+    "你需付出" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You Need to Pay"
+          }
+        }
+      }
     },
     "使用" : {
 
@@ -147,6 +329,17 @@
     },
     "停止探索" : {
 
+    },
+    "全部" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        }
+      }
     },
     "关于" : {
       "localizations" : {
@@ -171,20 +364,15 @@
         }
       }
     },
-    "切换" : {
-
-    },
-    "切换设备以发送" : {
-
-    },
-    "创建中..." : {
-
-    },
-    "创建者" : {
-
-    },
-    "创建频道" : {
-
+    "分享你的交易体验..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share your trade experience..."
+          }
+        }
+      }
     },
     "删除" : {
 
@@ -205,11 +393,15 @@
     "删除领地" : {
 
     },
-    "删除频道" : {
-
-    },
     "刷新" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Refresh"
+          }
+        }
+      }
     },
     "前往地图页面开始圈地，\n占领属于你的领土！" : {
 
@@ -217,8 +409,36 @@
     "前往设置" : {
 
     },
+    "剩余时间" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time Remaining"
+          }
+        }
+      }
+    },
     "加载中..." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading..."
+          }
+        }
+      }
+    },
+    "医疗" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Medical"
+          }
+        }
+      }
     },
     "升级" : {
 
@@ -226,11 +446,102 @@
     "升级建筑" : {
 
     },
+    "卖家留言" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seller's Message"
+          }
+        }
+      }
+    },
     "危险等级" : {
 
     },
+    "历史" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History"
+          }
+        }
+      }
+    },
     "去探索收集物资吧" : {
 
+    },
+    "去评价" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rate"
+          }
+        }
+      }
+    },
+    "发布于 %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Published %@"
+          }
+        }
+      }
+    },
+    "发布失败" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Publish Failed"
+          }
+        }
+      }
+    },
+    "发布成功" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Published Successfully"
+          }
+        }
+      }
+    },
+    "发布挂单" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create Offer"
+          }
+        }
+      }
+    },
+    "发布挂单后，其他玩家可以接受你的交易请求" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After publishing, other players can accept your trade request"
+          }
+        }
+      }
+    },
+    "发布新挂单" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create New Offer"
+          }
+        }
+      }
     },
     "发现废墟" : {
 
@@ -248,17 +559,25 @@
         }
       }
     },
-    "取消订阅" : {
-
+    "取消后物品将返还到你的背包" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Items will be returned to your backpack after cancellation"
+          }
+        }
+      }
     },
-    "只能接收信号，无法发送消息" : {
-
-    },
-    "可发送" : {
-
-    },
-    "呼叫中心" : {
-
+    "取消挂单" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel Offer"
+          }
+        }
+      }
     },
     "圈地功能测试" : {
 
@@ -298,26 +617,123 @@
     "存储" : {
 
     },
-    "官方频道" : {
-
+    "完成交易后会显示在这里" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completed trades will appear here"
+          }
+        }
+      }
+    },
+    "完美" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pristine"
+          }
+        }
+      }
+    },
+    "对方评价:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Their Rating:"
+          }
+        }
+      }
     },
     "导出日志" : {
 
     },
+    "尝试其他搜索词" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try another search term"
+          }
+        }
+      }
+    },
     "尝试调整筛选条件或搜索关键词" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try adjusting filters or search keywords"
+          }
+        }
+      }
+    },
+    "工具" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tools"
+          }
+        }
+      }
+    },
+    "已取消" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelled"
+          }
+        }
+      }
+    },
+    "已完成" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completed"
+          }
+        }
+      }
     },
     "已添加到背包" : {
-
-    },
-    "已订阅" : {
 
     },
     "已达最高等级" : {
 
     },
+    "已过期" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expired"
+          }
+        }
+      }
+    },
     "已选择位置" : {
 
+    },
+    "市场" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Market"
+          }
+        }
+      }
     },
     "帮助" : {
       "localizations" : {
@@ -345,6 +761,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Survivor Profile"
+          }
+        }
+      }
+    },
+    "库存: %lld 个" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stock: %lld"
+          }
+        }
+      }
+    },
+    "库存检查" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inventory Check"
           }
         }
       }
@@ -395,9 +831,6 @@
     "开始探索" : {
 
     },
-    "当前" : {
-
-    },
     "当前坐标" : {
 
     },
@@ -421,11 +854,66 @@
         }
       }
     },
-    "成为第一个发言的人吧" : {
-
+    "我出:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I Offer:"
+          }
+        }
+      }
+    },
+    "我想要的物品" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Items I Want"
+          }
+        }
+      }
+    },
+    "我的挂单" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Offers"
+          }
+        }
+      }
     },
     "我的领地" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Territories"
+          }
+        }
+      }
+    },
+    "我要:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I Want:"
+          }
+        }
+      }
+    },
+    "我要出的物品" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Items I'm Offering"
+          }
+        }
+      }
     },
     "或者使用以下方式登录" : {
       "localizations" : {
@@ -436,9 +924,6 @@
           }
         }
       }
-    },
-    "所有设备" : {
-
     },
     "所需资源" : {
 
@@ -461,6 +946,27 @@
     },
     "拆除建筑" : {
 
+    },
+    "挂单中" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        }
+      }
+    },
+    "挂单详情" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offer Details"
+          }
+        }
+      }
     },
     "排名" : {
 
@@ -498,20 +1004,71 @@
     "探索进行中" : {
 
     },
+    "接受交易" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accept Trade"
+          }
+        }
+      }
+    },
+    "提交失败" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Submission Failed"
+          }
+        }
+      }
+    },
+    "提交评价" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Submit Rating"
+          }
+        }
+      }
+    },
     "搜刮成功！" : {
 
     },
     "搜索物品..." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search items..."
+          }
+        }
+      }
     },
-    "搜索频道名称或频道码" : {
-
-    },
-    "收音机模式" : {
-
+    "操作失败" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Operation Failed"
+          }
+        }
+      }
     },
     "无法获取位置" : {
 
+    },
+    "暂无可用的交易挂单" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No available trade offers"
+          }
+        }
+      }
     },
     "暂无建筑" : {
 
@@ -519,8 +1076,15 @@
     "暂无建筑模板" : {
 
     },
-    "暂无消息" : {
-
+    "暂无评价" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Rating Yet"
+          }
+        }
+      }
     },
     "暂无领地" : {
 
@@ -535,11 +1099,75 @@
         }
       }
     },
+    "有效期" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duration"
+          }
+        }
+      }
+    },
+    "服装" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clothing"
+          }
+        }
+      }
+    },
     "未追踪" : {
 
     },
     "本次" : {
 
+    },
+    "杂项" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misc"
+          }
+        }
+      }
+    },
+    "材料" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Materials"
+          }
+        }
+      }
+    },
+    "查看详情" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Details"
+          }
+        }
+      }
+    },
+    "正常" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normal"
+          }
+        }
+      }
     },
     "此操作不可逆！您的所有数据将被永久删除。\n\n请输入 DELETE 确认删除。" : {
       "localizations" : {
@@ -561,6 +1189,28 @@
         }
       }
     },
+    "武器" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weapons"
+          }
+        }
+      }
+    },
+    "水类" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Water"
+          }
+        }
+      }
+    },
     "永久删除" : {
       "localizations" : {
         "en" : {
@@ -572,10 +1222,24 @@
       }
     },
     "没有找到物品" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No items found"
+          }
+        }
+      }
     },
     "没有找到相关物品" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No matching items found"
+          }
+        }
+      }
     },
     "测试中..." : {
       "localizations" : {
@@ -597,11 +1261,28 @@
         }
       }
     },
-    "消息中心" : {
-
+    "添加交易说明..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add trade description..."
+          }
+        }
+      }
     },
     "添加测试资源" : {
 
+    },
+    "添加物品" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Item"
+          }
+        }
+      }
     },
     "清空日志" : {
 
@@ -618,13 +1299,61 @@
     "点击顶部「建造」按钮开始" : {
 
     },
+    "物品不足" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insufficient Items"
+          }
+        }
+      }
+    },
+    "物品充足" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Items Sufficient"
+          }
+        }
+      }
+    },
+    "玩家挂单" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Player Offer"
+          }
+        }
+      }
+    },
+    "留言（可选）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Message (Optional)"
+          }
+        }
+      }
+    },
     "登记中..." : {
 
     },
-    "确定" : {
-
+    "破损" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Broken"
+          }
+        }
+      }
     },
-    "确定要删除「%@」频道吗？此操作不可撤销，所有订阅者将失去该频道。" : {
+    "确定" : {
 
     },
     "确定要删除这块领地吗？此操作不可撤销。" : {
@@ -656,11 +1385,48 @@
     "确认" : {
 
     },
+    "确认交易" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm Trade"
+          }
+        }
+      }
+    },
     "确认删除" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm Delete"
+          }
+        }
+      }
+    },
+    "确认取消" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm Cancel"
+          }
+        }
+      }
     },
     "确认建造" : {
 
+    },
+    "确认添加" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm"
+          }
+        }
+      }
     },
     "确认登记领地" : {
 
@@ -675,11 +1441,32 @@
         }
       }
     },
+    "磨损" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Worn"
+          }
+        }
+      }
+    },
     "稍后再说" : {
 
     },
     "立即搜刮" : {
 
+    },
+    "等待其他玩家发布交易请求" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for other players to publish trade requests"
+          }
+        }
+      }
     },
     "管理你的领地" : {
       "extractionState" : "stale",
@@ -701,6 +1488,16 @@
     "背包" : {
 
     },
+    "背包中没有可用物品" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No items available in backpack"
+          }
+        }
+      }
+    },
     "背包容量" : {
 
     },
@@ -710,6 +1507,17 @@
     "背包空空如也" : {
 
     },
+    "良好" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Good"
+          }
+        }
+      }
+    },
     "获得物品" : {
 
     },
@@ -717,18 +1525,6 @@
 
     },
     "行走距离不足，下次走远一点吧" : {
-
-    },
-    "覆盖范围: %@" : {
-
-    },
-    "订阅频道" : {
-
-    },
-    "设备未解锁" : {
-
-    },
-    "设备管理" : {
 
     },
     "设置" : {
@@ -751,6 +1547,26 @@
         }
       }
     },
+    "评价交易" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rate Trade"
+          }
+        }
+      }
+    },
+    "评语（可选）" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment (Optional)"
+          }
+        }
+      }
+    },
     "语言" : {
       "localizations" : {
         "en" : {
@@ -763,6 +1579,16 @@
     },
     "请在系统设置中允许《地球新主》访问您的位置，以便在末日世界中定位您的坐标。" : {
 
+    },
+    "请给这次交易打分" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rate this trade"
+          }
+        }
+      }
     },
     "请设置您的登录密码" : {
       "localizations" : {
@@ -852,12 +1678,6 @@
     "输入新名称" : {
 
     },
-    "输入消息..." : {
-
-    },
-    "输入频道名称（2-50字符）" : {
-
-    },
     "输入验证码" : {
       "localizations" : {
         "en" : {
@@ -871,6 +1691,58 @@
     "返回" : {
 
     },
+    "还有 %lld 种..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld more types..."
+          }
+        }
+      }
+    },
+    "还没有交易记录" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No trade history yet"
+          }
+        }
+      }
+    },
+    "还没有发布过挂单" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No offers published yet"
+          }
+        }
+      }
+    },
+    "还没有选择出售物品" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No items selected for sale"
+          }
+        }
+      }
+    },
+    "还没有选择需求物品" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No items requested yet"
+          }
+        }
+      }
+    },
     "这里是分支宇宙的测试页" : {
       "localizations" : {
         "en" : {
@@ -880,9 +1752,6 @@
           }
         }
       }
-    },
-    "进入频道" : {
-
     },
     "追踪中" : {
 
@@ -913,11 +1782,38 @@
     "选择位置" : {
 
     },
+    "选择出售物品" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Items to Sell"
+          }
+        }
+      }
+    },
     "选择建筑" : {
 
     },
-    "选择通讯设备，不同设备有不同覆盖范围" : {
-
+    "选择数量" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Quantity"
+          }
+        }
+      }
+    },
+    "选择需求物品" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Items to Request"
+          }
+        }
+      }
     },
     "通知" : {
       "localizations" : {
@@ -928,12 +1824,6 @@
           }
         }
       }
-    },
-    "通讯" : {
-
-    },
-    "通讯中心" : {
-
     },
     "通过 Apple 登录" : {
       "localizations" : {
@@ -984,8 +1874,15 @@
     "隐私政策" : {
 
     },
-    "需解锁设备" : {
-
+    "需要 %lld / 拥有 %lld" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "需要 %1$lld / 拥有 %2$lld"
+          }
+        }
+      }
     },
     "领地" : {
       "localizations" : {
@@ -997,29 +1894,16 @@
         }
       }
     },
-    "频道中心" : {
-
-    },
-    "频道介绍" : {
-
-    },
-    "频道列表" : {
-
-    },
-    "频道名称" : {
-
-    },
-    "频道名称至少需要2个字符" : {
-
-    },
-    "频道描述" : {
-
-    },
-    "频道类型" : {
-
-    },
-    "频道详情" : {
-
+    "食物" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Food"
+          }
+        }
+      }
     },
     "验证码已发送至 %@" : {
       "localizations" : {

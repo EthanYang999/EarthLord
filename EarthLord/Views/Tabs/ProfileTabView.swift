@@ -31,6 +31,9 @@ struct ProfileTabView: View {
                     // 统计数据
                     statsSection
 
+                    // 商城入口
+                    storeSection
+
                     // 功能列表
                     settingsSection
 
@@ -161,6 +164,32 @@ struct ProfileTabView: View {
                 .foregroundColor(ApocalypseTheme.textSecondary)
         }
         .frame(maxWidth: .infinity)
+    }
+
+    // MARK: - 商城入口
+    private var storeSection: some View {
+        NavigationLink {
+            StoreView()
+        } label: {
+            HStack {
+                Image(systemName: "cart.fill")
+                    .font(.title3)
+                    .foregroundColor(ApocalypseTheme.primary)
+                    .frame(width: 30)
+
+                Text("物资商城")
+                    .foregroundColor(ApocalypseTheme.textPrimary)
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(ApocalypseTheme.textMuted)
+            }
+            .padding()
+            .background(ApocalypseTheme.cardBackground)
+            .cornerRadius(16)
+        }
     }
 
     // MARK: - 功能列表

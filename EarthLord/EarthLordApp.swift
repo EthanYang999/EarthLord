@@ -12,6 +12,11 @@ import GoogleSignIn
 struct EarthLordApp: App {
     @ObservedObject var languageManager = LanguageManager.shared
 
+    init() {
+        // 启动内购交易监听器
+        IAPManager.shared.startTransactionListener()
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()

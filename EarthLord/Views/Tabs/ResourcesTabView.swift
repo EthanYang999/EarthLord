@@ -22,7 +22,7 @@ enum ResourceSegment: Int, CaseIterable {
         switch self {
         case .poi: return "POI"
         case .backpack: return "背包"
-        case .purchased: return "已购"
+        case .purchased: return "邮箱"
         case .territory: return "领地"
         case .trade: return "交易"
         }
@@ -112,11 +112,7 @@ struct ResourcesTabView: View {
             BackpackContentView()
 
         case .purchased:
-            placeholderView(
-                icon: "bag.fill",
-                title: "已购物品",
-                subtitle: "功能开发中"
-            )
+            MailboxView()
 
         case .territory:
             placeholderView(
@@ -126,11 +122,7 @@ struct ResourcesTabView: View {
             )
 
         case .trade:
-            placeholderView(
-                icon: "arrow.triangle.2.circlepath",
-                title: "交易市场",
-                subtitle: "功能开发中"
-            )
+            TradeContentView()
         }
     }
 
@@ -528,6 +520,136 @@ struct BackpackContentView: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 60)
         }
+    }
+}
+
+// MARK: - 交易内容视图（去除导航栏的版本）
+
+struct TradeContentView: View {
+
+    // MARK: - State
+
+    @State private var selectedTab = 0
+    @StateObject private var tradeManager = TradeManager.shared
+    @StateObject private var inventoryManager = InventoryManager.shared
+
+    // MARK: - Body
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // 顶部分段选择器
+            tradeSegmentedPicker
+
+            // 分割线
+            Divider()
+                .background(ApocalypseTheme.textMuted.opacity(0.3))
+
+            // 内容区域
+            TabView(selection: $selectedTab) {
+                MarketView()
+                    .tag(0)
+
+                MyOffersView()
+                    .tag(1)
+
+                TradeHistoryView()
+                    .tag(2)
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+        }
+        .background(ApocalypseTheme.background)
+        .task {
+            // 首次加载数据
+            await tradeManager.refreshAll()
+            if inventoryManager.itemDefinitions.isEmpty {
+                await inventoryManager.loadItemDefinitions()
+            }
+            await inventoryManager.loadInventory()
+        }
+    }
+
+    // MARK: - Segmented Picker
+
+    private var tradeSegmentedPicker: some View {
+        HStack(spacing: 0) {
+            TradeTabButton(
+                title: "市场",
+                icon: "storefront",
+                isSelected: selectedTab == 0
+            ) {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    selectedTab = 0
+                }
+            }
+
+            TradeTabButton(
+                title: "我的挂单",
+                icon: "tag",
+                isSelected: selectedTab == 1,
+                badge: tradeManager.myOffers.filter { $0.status == .active }.count
+            ) {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    selectedTab = 1
+                }
+            }
+
+            TradeTabButton(
+                title: "历史",
+                icon: "clock.arrow.circlepath",
+                isSelected: selectedTab == 2
+            ) {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    selectedTab = 2
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(ApocalypseTheme.background)
+    }
+}
+
+// MARK: - Trade Tab Button
+
+private struct TradeTabButton: View {
+    let title: String
+    let icon: String
+    let isSelected: Bool
+    var badge: Int = 0
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                HStack(spacing: 4) {
+                    Image(systemName: icon)
+                        .font(.system(size: 14))
+
+                    Text(title)
+                        .font(.subheadline)
+                        .fontWeight(isSelected ? .semibold : .regular)
+
+                    if badge > 0 {
+                        Text("\(badge)")
+                            .font(.caption2)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(ApocalypseTheme.primary)
+                            .cornerRadius(10)
+                    }
+                }
+
+                // 选中指示器
+                Rectangle()
+                    .fill(isSelected ? ApocalypseTheme.primary : Color.clear)
+                    .frame(height: 2)
+                    .cornerRadius(1)
+            }
+            .foregroundColor(isSelected ? ApocalypseTheme.primary : ApocalypseTheme.textSecondary)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
