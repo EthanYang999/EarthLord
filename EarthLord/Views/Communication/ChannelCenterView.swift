@@ -54,8 +54,13 @@ struct ChannelCenterView: View {
                 .environmentObject(authManager)
         }
         .sheet(item: $selectedChannel) { channel in
-            ChannelDetailView(channel: channel)
-                .environmentObject(authManager)
+            // ✅ Day 36: 区分官方频道和普通频道
+            if manager.isOfficialChannel(channel.id) {
+                OfficialChannelDetailView(channel: channel)
+            } else {
+                ChannelDetailView(channel: channel)
+                    .environmentObject(authManager)
+            }
         }
     }
 

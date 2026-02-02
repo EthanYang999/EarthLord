@@ -454,6 +454,41 @@ final class CommunicationManager: ObservableObject {
         isLoading = false
     }
 
+    // MARK: - 官方频道相关 (Day 36)
+
+    /// 官方频道ID（固定UUID）
+    static let officialChannelId = UUID(uuidString: "00000000-0000-0000-0000-000000000000")!
+
+    /// 确保用户已订阅官方频道
+    /// - Parameter userId: 用户ID
+    func ensureOfficialChannelSubscribed(userId: UUID) async {
+        // 检查是否已订阅官方频道
+        if isSubscribed(channelId: CommunicationManager.officialChannelId) {
+            print("✅ [CommunicationManager] 用户已订阅官方频道")
+            return
+        }
+
+        // 自动订阅官方频道
+        print("🔄 [CommunicationManager] 自动订阅官方频道...")
+        let success = await subscribeToChannel(
+            userId: userId,
+            channelId: CommunicationManager.officialChannelId
+        )
+
+        if success {
+            print("✅ [CommunicationManager] 自动订阅官方频道成功")
+        } else {
+            print("❌ [CommunicationManager] 自动订阅官方频道失败")
+        }
+    }
+
+    /// 判断是否为官方频道
+    /// - Parameter channelId: 频道ID
+    /// - Returns: 是否为官方频道
+    func isOfficialChannel(_ channelId: UUID) -> Bool {
+        return channelId == CommunicationManager.officialChannelId
+    }
+
     // MARK: - Message Methods
 
     /// 加载频道消息历史
@@ -547,6 +582,89 @@ final class CommunicationManager: ObservableObject {
     /// - Returns: 消息数组
     func getMessages(for channelId: UUID) -> [ChannelMessage] {
         channelMessages[channelId] ?? []
+    }
+
+    // MARK: - 消息聚合相关 (Day 36)
+
+    /// 频道摘要（用于消息中心）
+    struct ChannelSummary: Identifiable {
+        let channel: CommunicationChannel
+        let lastMessage: ChannelMessage?
+        let unreadCount: Int
+
+        var id: UUID { channel.id }
+    }
+
+    /// 获取所有频道的摘要信息（用于消息中心）
+    /// - Returns: 频道摘要数组（官方频道置顶，其他按最新消息时间排序）
+    func getChannelSummaries() -> [ChannelSummary] {
+        var summaries: [ChannelSummary] = []
+
+        for subscribedChannel in subscribedChannels {
+            let messages = channelMessages[subscribedChannel.channel.id] ?? []
+            let lastMessage = messages.last  // 消息按时间升序，所以最后一条是最新的
+
+            let summary = ChannelSummary(
+                channel: subscribedChannel.channel,
+                lastMessage: lastMessage,
+                unreadCount: 0  // TODO: 未来可以实现未读计数
+            )
+            summaries.append(summary)
+        }
+
+        // 排序：官方频道置顶，其他按最新消息时间排序
+        summaries.sort { (a, b) -> Bool in
+            // 官方频道永远在最前面
+            let aIsOfficial = isOfficialChannel(a.channel.id)
+            let bIsOfficial = isOfficialChannel(b.channel.id)
+
+            if aIsOfficial && !bIsOfficial {
+                return true
+            } else if !aIsOfficial && bIsOfficial {
+                return false
+            }
+
+            // 都是官方或都不是官方，按最新消息时间排序
+            let aTime = a.lastMessage?.createdAt ?? Date.distantPast
+            let bTime = b.lastMessage?.createdAt ?? Date.distantPast
+            return aTime > bTime
+        }
+
+        return summaries
+    }
+
+    /// 加载所有订阅频道的最新消息（用于消息中心预览）
+    func loadAllChannelLatestMessages() async {
+        print("🔄 [CommunicationManager] 开始加载所有频道最新消息...")
+
+        for subscribedChannel in subscribedChannels {
+            let channelId = subscribedChannel.channel.id
+
+            // 如果已经有消息缓存，跳过
+            if let messages = channelMessages[channelId], !messages.isEmpty {
+                continue
+            }
+
+            // 加载最新1条消息
+            do {
+                let response: [ChannelMessage] = try await client
+                    .from("channel_messages")
+                    .select()
+                    .eq("channel_id", value: channelId.uuidString)
+                    .order("created_at", ascending: false)
+                    .limit(1)
+                    .execute()
+                    .value
+
+                if !response.isEmpty {
+                    channelMessages[channelId] = response
+                }
+            } catch {
+                print("❌ [CommunicationManager] 加载频道 \(channelId) 最新消息失败: \(error)")
+            }
+        }
+
+        print("✅ [CommunicationManager] 所有频道最新消息加载完成")
     }
 
     // MARK: - Realtime Methods

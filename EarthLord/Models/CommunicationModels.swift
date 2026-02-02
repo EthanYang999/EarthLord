@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 // MARK: - 设备类型
 enum DeviceType: String, Codable, CaseIterable {
@@ -400,8 +401,54 @@ struct LocationPoint: Codable {
 // MARK: - 消息元数据
 struct MessageMetadata: Codable {
     let deviceType: String?
+    let category: String?  // ✅ 新增：消息分类（官方频道专用）
 
     enum CodingKeys: String, CodingKey {
         case deviceType = "device_type"
+        case category
+    }
+}
+
+// MARK: - 消息分类（官方频道专用）
+enum MessageCategory: String, Codable, CaseIterable {
+    case survival = "survival"
+    case news = "news"
+    case mission = "mission"
+    case alert = "alert"
+
+    var displayName: String {
+        switch self {
+        case .survival: return "生存指南"
+        case .news: return "游戏资讯"
+        case .mission: return "任务发布"
+        case .alert: return "紧急广播"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .survival: return .green
+        case .news: return .blue
+        case .mission: return .orange
+        case .alert: return .red
+        }
+    }
+
+    var iconName: String {
+        switch self {
+        case .survival: return "leaf.fill"
+        case .news: return "newspaper.fill"
+        case .mission: return "target"
+        case .alert: return "exclamationmark.triangle.fill"
+        }
+    }
+}
+
+// MARK: - ChannelMessage Extension for Category
+extension ChannelMessage {
+    /// 获取消息分类（仅官方频道消息有分类）
+    var category: MessageCategory? {
+        guard let categoryString = metadata?.category else { return nil }
+        return MessageCategory(rawValue: categoryString)
     }
 }

@@ -14,6 +14,7 @@ struct DeviceManagementView: View {
     @EnvironmentObject var authManager: AuthManager
     @State private var showUnlockAlert = false
     @State private var selectedDeviceForUnlock: DeviceType?
+    @State private var showingCallsignSettings = false  // ✅ Day 36: 呼号设置
 
     var body: some View {
         ScrollView {
@@ -46,10 +47,52 @@ struct DeviceManagementView: View {
                         deviceCard(deviceType)
                     }
                 }
+
+                // ✅ Day 36: 呼号设置入口
+                Divider()
+                    .padding(.vertical, 8)
+
+                Button(action: { showingCallsignSettings = true }) {
+                    HStack(spacing: 12) {
+                        // 图标
+                        ZStack {
+                            Circle()
+                                .fill(ApocalypseTheme.primary.opacity(0.15))
+                                .frame(width: 50, height: 50)
+                            Image(systemName: "person.text.rectangle")
+                                .font(.system(size: 22))
+                                .foregroundColor(ApocalypseTheme.primary)
+                        }
+
+                        // 信息
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("呼号设置")
+                                .font(.subheadline)
+                                .fontWeight(.medium)
+                                .foregroundColor(ApocalypseTheme.textPrimary)
+
+                            Text("设置你的电台呼号")
+                                .font(.caption)
+                                .foregroundColor(ApocalypseTheme.textSecondary)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(ApocalypseTheme.textSecondary)
+                    }
+                    .padding(12)
+                    .background(ApocalypseTheme.cardBackground)
+                    .cornerRadius(10)
+                }
             }
             .padding(16)
         }
         .background(ApocalypseTheme.background)
+        .sheet(isPresented: $showingCallsignSettings) {
+            CallsignSettingsSheet()
+                .environmentObject(authManager)
+        }
         .alert("设备未解锁", isPresented: $showUnlockAlert) {
             Button("确定", role: .cancel) {}
         } message: {

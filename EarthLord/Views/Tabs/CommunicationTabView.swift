@@ -92,6 +92,8 @@ struct CommunicationTabView: View {
             if let userId = authManager.currentUser?.id {
                 Task {
                     await communicationManager.loadDevices(userId: userId)
+                    // ✅ Day 36: 确保用户已订阅官方频道
+                    await communicationManager.ensureOfficialChannelSubscribed(userId: userId)
                 }
             }
         }
