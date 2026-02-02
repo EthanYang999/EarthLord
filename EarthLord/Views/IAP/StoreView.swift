@@ -212,7 +212,7 @@ struct StoreView: View {
         case .success:
             print("[StoreView] 购买成功")
         case .failure(let error):
-            print("[StoreView] 购买失败: \(error.localizedDescription ?? "未知错误")")
+            print("[StoreView] 购买失败: \(error.localizedDescription)")
         }
     }
 
@@ -222,7 +222,7 @@ struct StoreView: View {
         case .success(let count):
             restoreMessage = count > 0 ? "已同步 \(count) 笔交易记录" : "没有找到需要恢复的购买"
         case .failure(let error):
-            restoreMessage = error.localizedDescription ?? "恢复失败"
+            restoreMessage = error.localizedDescription
         }
         showRestoreAlert = true
     }

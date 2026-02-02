@@ -4,7 +4,13 @@
     "" : {
 
     },
-    "\"%@\"" : {
+    "·" : {
+
+    },
+    "(%lld)" : {
+
+    },
+    "（可选）" : {
 
     },
     "/" : {
@@ -13,15 +19,11 @@
     "#%lld" : {
 
     },
-    "%@ ×%lld" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ ×%2$lld"
-          }
-        }
-      }
+    "%@" : {
+
+    },
+    "%@:" : {
+
     },
     "%lld" : {
       "localizations" : {
@@ -45,10 +47,14 @@
     "%lld 分钟" : {
 
     },
+    "%lld 成员" : {
+
+    },
     "%lld 点" : {
 
     },
     "%lld 种" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -58,10 +64,16 @@
         }
       }
     },
+    "%lld/50" : {
+
+    },
+    "%lld/200" : {
+
+    },
     "%lld%%" : {
 
     },
-    "×%lld" : {
+    "¥%lld" : {
 
     },
     "1 周" : {
@@ -133,6 +145,9 @@
     "AI" : {
 
     },
+    "Day 33 实现" : {
+
+    },
     "EARTH LORD" : {
       "localizations" : {
         "en" : {
@@ -162,6 +177,9 @@
     "MAX" : {
 
     },
+    "PTT 通话" : {
+
+    },
     "Supabase 连接测试" : {
       "localizations" : {
         "en" : {
@@ -181,7 +199,14 @@
     "x%lld" : {
 
     },
+    "一键领取" : {
+
+    },
+    "一键领取全部 (%lld)" : {
+
+    },
     "与玩家的交易" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -221,7 +246,11 @@
         }
       }
     },
+    "交易历史" : {
+
+    },
     "交易失败" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -232,6 +261,7 @@
       }
     },
     "交易已完成" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -252,6 +282,7 @@
       }
     },
     "交易成功！" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -261,7 +292,23 @@
         }
       }
     },
+    "交易获得" : {
+
+    },
+    "交易验证失败" : {
+
+    },
+    "什么是呼号？" : {
+
+    },
+    "仅接收" : {
+
+    },
+    "任务奖励" : {
+
+    },
     "你将获得" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -272,6 +319,7 @@
       }
     },
     "你的挂单已发布，等待其他玩家接受" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -282,6 +330,7 @@
       }
     },
     "你的评价:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -292,6 +341,7 @@
       }
     },
     "你给出:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -302,6 +352,7 @@
       }
     },
     "你获得:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -312,6 +363,7 @@
       }
     },
     "你需付出" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -322,6 +374,12 @@
       }
     },
     "使用" : {
+
+    },
+    "例如：Alpha-01" : {
+
+    },
+    "保存呼号" : {
 
     },
     "停止圈地" : {
@@ -365,6 +423,7 @@
       }
     },
     "分享你的交易体验..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -373,6 +432,21 @@
           }
         }
       }
+    },
+    "切换" : {
+
+    },
+    "切换设备以发送" : {
+
+    },
+    "创建中..." : {
+
+    },
+    "创建者" : {
+
+    },
+    "创建频道" : {
+
     },
     "删除" : {
 
@@ -393,6 +467,9 @@
     "删除领地" : {
 
     },
+    "删除频道" : {
+
+    },
     "刷新" : {
       "localizations" : {
         "en" : {
@@ -410,6 +487,7 @@
 
     },
     "剩余时间" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -418,6 +496,9 @@
           }
         }
       }
+    },
+    "功能开发中" : {
+
     },
     "加载中..." : {
       "localizations" : {
@@ -428,6 +509,9 @@
           }
         }
       }
+    },
+    "加载商品中..." : {
+
     },
     "医疗" : {
       "extractionState" : "stale",
@@ -447,6 +531,7 @@
 
     },
     "卖家留言" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -474,6 +559,7 @@
 
     },
     "去评价" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -484,6 +570,7 @@
       }
     },
     "发布于 %@" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -494,6 +581,7 @@
       }
     },
     "发布失败" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -504,6 +592,7 @@
       }
     },
     "发布成功" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -514,6 +603,7 @@
       }
     },
     "发布挂单" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -524,6 +614,7 @@
       }
     },
     "发布挂单后，其他玩家可以接受你的交易请求" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -534,6 +625,7 @@
       }
     },
     "发布新挂单" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -549,6 +641,9 @@
     "发现独特物品！" : {
 
     },
+    "发生未知错误" : {
+
+    },
     "取消" : {
       "localizations" : {
         "en" : {
@@ -560,6 +655,7 @@
       }
     },
     "取消后物品将返还到你的背包" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -570,6 +666,7 @@
       }
     },
     "取消挂单" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -578,6 +675,30 @@
           }
         }
       }
+    },
+    "取消订阅" : {
+
+    },
+    "只能接收信号，无法发送消息" : {
+
+    },
+    "可发送" : {
+
+    },
+    "呼号已保存" : {
+
+    },
+    "呼号是你在通讯系统中的身份标识，类似于电台呼号。其他生存者会通过呼号识别你。" : {
+
+    },
+    "呼号规则：" : {
+
+    },
+    "呼号设置" : {
+
+    },
+    "商城购买" : {
+
     },
     "圈地功能测试" : {
 
@@ -618,6 +739,7 @@
 
     },
     "完成交易后会显示在这里" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -638,7 +760,14 @@
         }
       }
     },
+    "官方" : {
+
+    },
+    "官方公告" : {
+
+    },
     "对方评价:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -652,6 +781,7 @@
 
     },
     "尝试其他搜索词" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -707,6 +837,9 @@
     "已添加到背包" : {
 
     },
+    "已订阅" : {
+
+    },
     "已达最高等级" : {
 
     },
@@ -722,6 +855,9 @@
       }
     },
     "已选择位置" : {
+
+    },
+    "已领取" : {
 
     },
     "市场" : {
@@ -765,7 +901,11 @@
         }
       }
     },
+    "幸存者补给包" : {
+
+    },
     "库存: %lld 个" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -776,6 +916,7 @@
       }
     },
     "库存检查" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -831,6 +972,9 @@
     "开始探索" : {
 
     },
+    "当前" : {
+
+    },
     "当前坐标" : {
 
     },
@@ -854,7 +998,14 @@
         }
       }
     },
+    "恢复购买" : {
+
+    },
+    "成为第一个发言的人吧" : {
+
+    },
     "我出:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -865,6 +1016,7 @@
       }
     },
     "我想要的物品" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -875,7 +1027,6 @@
       }
     },
     "我的挂单" : {
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -896,6 +1047,7 @@
       }
     },
     "我要:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -906,6 +1058,7 @@
       }
     },
     "我要出的物品" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -924,6 +1077,9 @@
           }
         }
       }
+    },
+    "所有设备" : {
+
     },
     "所需资源" : {
 
@@ -959,6 +1115,7 @@
       }
     },
     "挂单详情" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -967,6 +1124,9 @@
           }
         }
       }
+    },
+    "按住通话" : {
+
     },
     "排名" : {
 
@@ -991,6 +1151,9 @@
     "探索时长" : {
 
     },
+    "探索者物资包" : {
+
+    },
     "探索距离" : {
       "localizations" : {
         "en" : {
@@ -1005,6 +1168,7 @@
 
     },
     "接受交易" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1015,6 +1179,7 @@
       }
     },
     "提交失败" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1025,6 +1190,7 @@
       }
     },
     "提交评价" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1047,7 +1213,11 @@
         }
       }
     },
+    "搜索频道名称或频道码" : {
+
+    },
     "操作失败" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1057,10 +1227,23 @@
         }
       }
     },
+    "收音机模式" : {
+
+    },
+    "数据库错误: %@" : {
+
+    },
     "无法获取位置" : {
 
     },
+    "暂无公告" : {
+
+    },
+    "暂无可用商品" : {
+
+    },
     "暂无可用的交易挂单" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1076,7 +1259,11 @@
     "暂无建筑模板" : {
 
     },
+    "暂无消息" : {
+
+    },
     "暂无评价" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1100,6 +1287,7 @@
       }
     },
     "有效期" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1120,7 +1308,19 @@
         }
       }
     },
+    "未找到该商品" : {
+
+    },
     "未追踪" : {
+
+    },
+    "未选择频道" : {
+
+    },
+    "末日物资站" : {
+
+    },
+    "末日霸主包" : {
 
     },
     "本次" : {
@@ -1148,7 +1348,11 @@
         }
       }
     },
+    "松开发送" : {
+
+    },
     "查看详情" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1157,6 +1361,9 @@
           }
         }
       }
+    },
+    "格式示例：" : {
+
     },
     "正常" : {
       "extractionState" : "stale",
@@ -1241,6 +1448,9 @@
         }
       }
     },
+    "活动奖励" : {
+
+    },
     "测试中..." : {
       "localizations" : {
         "en" : {
@@ -1261,7 +1471,20 @@
         }
       }
     },
+    "消息中心" : {
+
+    },
+    "消息内容" : {
+
+    },
+    "消息已发送" : {
+
+    },
+    "消耗型商品，一次性使用" : {
+
+    },
     "添加交易说明..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1275,6 +1498,7 @@
 
     },
     "添加物品" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1300,6 +1524,7 @@
 
     },
     "物品不足" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1310,6 +1535,7 @@
       }
     },
     "物品充足" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1319,7 +1545,17 @@
         }
       }
     },
+    "物品已被领取" : {
+
+    },
+    "物资商城" : {
+
+    },
+    "物资已发放到您的邮箱，请前往资源页面的邮箱中领取！" : {
+
+    },
     "玩家挂单" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1330,6 +1566,7 @@
       }
     },
     "留言（可选）" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1354,6 +1591,9 @@
       }
     },
     "确定" : {
+
+    },
+    "确定要删除「%@」频道吗？此操作不可撤销，所有订阅者将失去该频道。" : {
 
     },
     "确定要删除这块领地吗？此操作不可撤销。" : {
@@ -1386,6 +1626,7 @@
 
     },
     "确认交易" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1406,6 +1647,7 @@
       }
     },
     "确认取消" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1419,6 +1661,7 @@
 
     },
     "确认添加" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1459,6 +1702,7 @@
 
     },
     "等待其他玩家发布交易请求" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1482,13 +1726,20 @@
     "米" : {
 
     },
+    "系统发放" : {
+
+    },
     "累计" : {
+
+    },
+    "网络连接失败" : {
 
     },
     "背包" : {
 
     },
     "背包中没有可用物品" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1499,6 +1750,9 @@
       }
     },
     "背包容量" : {
+
+    },
+    "背包容量不足" : {
 
     },
     "背包快满了！" : {
@@ -1518,6 +1772,9 @@
         }
       }
     },
+    "获取珍贵物资，在末日中生存" : {
+
+    },
     "获得物品" : {
 
     },
@@ -1525,6 +1782,21 @@
 
     },
     "行走距离不足，下次走远一点吧" : {
+
+    },
+    "覆盖范围: %@" : {
+
+    },
+    "订阅频道" : {
+
+    },
+    "订阅频道后，消息会在这里显示" : {
+
+    },
+    "设备未解锁" : {
+
+    },
+    "设备管理" : {
 
     },
     "设置" : {
@@ -1537,6 +1809,9 @@
         }
       }
     },
+    "设置你的电台呼号" : {
+
+    },
     "设置密码" : {
       "localizations" : {
         "en" : {
@@ -1547,7 +1822,11 @@
         }
       }
     },
+    "设置成功" : {
+
+    },
     "评价交易" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1558,6 +1837,7 @@
       }
     },
     "评语（可选）" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1566,6 +1846,9 @@
           }
         }
       }
+    },
+    "该分类暂无消息" : {
+
     },
     "语言" : {
       "localizations" : {
@@ -1577,10 +1860,17 @@
         }
       }
     },
+    "请先登录账户" : {
+
+    },
     "请在系统设置中允许《地球新主》访问您的位置，以便在末日世界中定位您的坐标。" : {
 
     },
+    "请稍后查看" : {
+
+    },
     "请给这次交易打分" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1643,6 +1933,24 @@
         }
       }
     },
+    "购买后物资将发送至邮箱" : {
+
+    },
+    "购买失败: %@" : {
+
+    },
+    "购买已取消" : {
+
+    },
+    "购买成功" : {
+
+    },
+    "购买正在处理中" : {
+
+    },
+    "购买物资包后，物品将发送到这里" : {
+
+    },
     "资源" : {
 
     },
@@ -1665,6 +1973,9 @@
         }
       }
     },
+    "输入呼号" : {
+
+    },
     "输入您的邮箱" : {
       "localizations" : {
         "en" : {
@@ -1676,6 +1987,12 @@
       }
     },
     "输入新名称" : {
+
+    },
+    "输入消息..." : {
+
+    },
+    "输入频道名称（2-50字符）" : {
 
     },
     "输入验证码" : {
@@ -1692,6 +2009,7 @@
 
     },
     "还有 %lld 种..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1702,6 +2020,7 @@
       }
     },
     "还没有交易记录" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1712,6 +2031,7 @@
       }
     },
     "还没有发布过挂单" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1753,6 +2073,9 @@
         }
       }
     },
+    "进入频道" : {
+
+    },
     "追踪中" : {
 
     },
@@ -1783,6 +2106,7 @@
 
     },
     "选择出售物品" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1796,6 +2120,7 @@
 
     },
     "选择数量" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1805,7 +2130,11 @@
         }
       }
     },
+    "选择通讯设备，不同设备有不同覆盖范围" : {
+
+    },
     "选择需求物品" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1824,6 +2153,12 @@
           }
         }
       }
+    },
+    "通讯" : {
+
+    },
+    "通讯中心" : {
+
     },
     "通过 Apple 登录" : {
       "localizations" : {
@@ -1845,7 +2180,16 @@
         }
       }
     },
+    "邮箱为空" : {
+
+    },
+    "邮箱空空如也" : {
+
+    },
     "重命名领地" : {
+
+    },
+    "重新加载" : {
 
     },
     "重新发送 (%llds)" : {
@@ -1871,18 +2215,20 @@
     "重试" : {
 
     },
+    "长按下方按钮发送消息" : {
+
+    },
     "隐私政策" : {
 
     },
-    "需要 %lld / 拥有 %lld" : {
-      "localizations" : {
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "需要 %1$lld / 拥有 %2$lld"
-          }
-        }
-      }
+    "需解锁设备" : {
+
+    },
+    "领主物资包" : {
+
+    },
+    "领取" : {
+
     },
     "领地" : {
       "localizations" : {
@@ -1893,6 +2239,30 @@
           }
         }
       }
+    },
+    "频道中心" : {
+
+    },
+    "频道介绍" : {
+
+    },
+    "频道列表" : {
+
+    },
+    "频道名称" : {
+
+    },
+    "频道名称至少需要2个字符" : {
+
+    },
+    "频道描述" : {
+
+    },
+    "频道类型" : {
+
+    },
+    "频道详情" : {
+
     },
     "食物" : {
       "extractionState" : "stale",

@@ -179,7 +179,7 @@ enum ChannelType: String, Codable, CaseIterable {
 }
 
 // MARK: - 频道模型
-struct CommunicationChannel: Codable, Identifiable {
+struct CommunicationChannel: Codable, Identifiable, Hashable {
     let id: UUID
     let creatorId: UUID
     let channelType: ChannelType
@@ -205,10 +205,19 @@ struct CommunicationChannel: Codable, Identifiable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
+
+    // ✅ Hashable 实现（使用 id 作为唯一标识）
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    static func == (lhs: CommunicationChannel, rhs: CommunicationChannel) -> Bool {
+        lhs.id == rhs.id
+    }
 }
 
 // MARK: - 频道位置
-struct ChannelLocation: Codable {
+struct ChannelLocation: Codable, Hashable {
     let latitude: Double
     let longitude: Double
     let radius: Double?

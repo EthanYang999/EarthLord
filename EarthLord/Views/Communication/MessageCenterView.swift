@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Auth
 
 struct MessageCenterView: View {
     @StateObject private var communicationManager = CommunicationManager.shared
@@ -150,7 +151,10 @@ struct MessageCenterView: View {
             // 再加载所有频道的最新消息
             await communicationManager.loadAllChannelLatestMessages()
 
-            isLoading = false
+            // ✅ 确保在主线程更新状态
+            await MainActor.run {
+                isLoading = false
+            }
         }
     }
 }

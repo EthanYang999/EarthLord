@@ -51,13 +51,15 @@ struct MessageRowView: View {
 
                 // 最新消息预览
                 if let lastMessage = summary.lastMessage {
-                    HStack(spacing: 4) {
+                    HStack(alignment: .top, spacing: 4) {
                         // 呼号（如果有）
                         if let callsign = lastMessage.senderCallsign {
                             Text("\(callsign):")
                                 .font(.subheadline)
+                                .fontWeight(.medium)  // ✅ 增加字重
                                 .foregroundColor(ApocalypseTheme.primary)
                                 .lineLimit(1)
+                                .fixedSize(horizontal: true, vertical: false)  // ✅ 防止压缩
                         }
 
                         // 消息内容
@@ -65,6 +67,7 @@ struct MessageRowView: View {
                             .font(.subheadline)
                             .foregroundColor(ApocalypseTheme.textSecondary)
                             .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)  // ✅ 垂直自适应
                     }
                 } else {
                     Text("暂无消息")
@@ -121,69 +124,25 @@ struct MessageRowView: View {
 }
 
 #Preview {
-    VStack(spacing: 12) {
-        // 官方频道示例
-        MessageRowView(
-            summary: CommunicationManager.ChannelSummary(
-                channel: CommunicationChannel(
-                    id: UUID(),
-                    creatorId: UUID(),
-                    channelType: .official,
-                    channelCode: "OFF-MAIN",
-                    name: "官方频道",
-                    description: "官方公告",
-                    isActive: true,
-                    memberCount: 100,
-                    location: nil,
-                    createdAt: Date(),
-                    updatedAt: Date()
-                ),
-                lastMessage: ChannelMessage(
-                    messageId: UUID(),
-                    channelId: UUID(),
-                    senderId: UUID(),
-                    senderCallsign: "系统",
-                    content: "欢迎来到地球领主！",
-                    senderLocation: nil,
-                    metadata: nil,
-                    createdAt: Date().addingTimeInterval(-3600),
-                    senderDeviceType: nil
-                ),
-                unreadCount: 3
-            )
+    MessageRowView(
+        summary: CommunicationManager.ChannelSummary(
+            channel: CommunicationChannel(
+                id: UUID(),
+                creatorId: UUID(),
+                channelType: .official,
+                channelCode: "OFF-MAIN",
+                name: "官方频道",
+                description: "官方公告",
+                isActive: true,
+                memberCount: 100,
+                location: nil as ChannelLocation?,
+                createdAt: Date(),
+                updatedAt: Date()
+            ),
+            lastMessage: nil,
+            unreadCount: 0
         )
-
-        // 普通频道示例
-        MessageRowView(
-            summary: CommunicationManager.ChannelSummary(
-                channel: CommunicationChannel(
-                    id: UUID(),
-                    creatorId: UUID(),
-                    channelType: .public,
-                    channelCode: "PUB-001",
-                    name: "生存者联盟",
-                    description: "幸存者交流",
-                    isActive: true,
-                    memberCount: 50,
-                    location: nil,
-                    createdAt: Date(),
-                    updatedAt: Date()
-                ),
-                lastMessage: ChannelMessage(
-                    messageId: UUID(),
-                    channelId: UUID(),
-                    senderId: UUID(),
-                    senderCallsign: "Alpha-01",
-                    content: "有人在附近吗？需要支援！",
-                    senderLocation: nil,
-                    metadata: nil,
-                    createdAt: Date().addingTimeInterval(-300),
-                    senderDeviceType: .walkieTalkie
-                ),
-                unreadCount: 0
-            )
-        )
-    }
+    )
     .padding()
     .background(ApocalypseTheme.background)
 }

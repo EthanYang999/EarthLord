@@ -7,6 +7,8 @@
 //
 
 import SwiftUI
+import Auth
+import CoreLocation
 
 struct PTTCallView: View {
     @StateObject private var communicationManager = CommunicationManager.shared
@@ -16,6 +18,7 @@ struct PTTCallView: View {
     @State private var messageText = ""
     @State private var isPressingPTT = false
     @State private var showSuccessToast = false
+    @FocusState private var isInputFocused: Bool  // ✅ 键盘管理
 
     var body: some View {
         ZStack {
@@ -160,16 +163,33 @@ struct PTTCallView: View {
                 .font(.caption)
                 .foregroundColor(ApocalypseTheme.textSecondary)
 
-            TextEditor(text: $messageText)
-                .frame(height: 80)
-                .padding(8)
-                .background(ApocalypseTheme.cardBackground)
-                .cornerRadius(8)
-                .foregroundColor(ApocalypseTheme.textPrimary)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(ApocalypseTheme.textSecondary.opacity(0.3), lineWidth: 1)
-                )
+            ZStack(alignment: .topLeading) {
+                // ✅ 修复 TextEditor 显示问题
+                TextEditor(text: $messageText)
+                    .frame(height: 80)
+                    .padding(8)
+                    .scrollContentBackground(.hidden)  // ✅ 隐藏默认白色背景
+                    .background(Color.clear)
+                    .foregroundColor(ApocalypseTheme.textPrimary)
+                    .focused($isInputFocused)  // ✅ 绑定焦点状态
+                    .tint(ApocalypseTheme.primary)  // 光标颜色
+
+                // 占位符文本
+                if messageText.isEmpty {
+                    Text("输入消息内容...")
+                        .font(.body)
+                        .foregroundColor(ApocalypseTheme.textSecondary.opacity(0.5))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 16)
+                        .allowsHitTesting(false)
+                }
+            }
+            .background(ApocalypseTheme.cardBackground)  // ✅ 背景放在外层
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(ApocalypseTheme.textSecondary.opacity(0.3), lineWidth: 1)
+            )
 
             Text("长按下方按钮发送消息")
                 .font(.caption2)
@@ -213,6 +233,7 @@ struct PTTCallView: View {
             LongPressGesture(minimumDuration: 0.1)
                 .onChanged { _ in
                     if !isPressingPTT {
+                        isInputFocused = false  // ✅ 关闭键盘
                         isPressingPTT = true
                         triggerHapticFeedback()
                     }
@@ -285,26 +306,30 @@ struct PTTCallView: View {
     /// 发送 PTT 消息
     private func sendPTTMessage() {
         guard let channel = selectedChannel,
-              !messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-              let userId = authManager.currentUser?.id else {
+              !messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return
         }
 
         Task {
-            let success = await communicationManager.sendMessage(
+            // 获取当前位置（可选）
+            let location = LocationManager.shared.userLocation
+
+            let success = await communicationManager.sendChannelMessage(
                 channelId: channel.id,
                 content: messageText,
-                senderId: userId,
-                deviceType: communicationManager.currentDevice?.deviceType
+                latitude: location?.latitude,
+                longitude: location?.longitude
             )
 
             if success {
                 // 清空输入框
-                messageText = ""
+                await MainActor.run {
+                    messageText = ""
 
-                // 显示成功提示
-                withAnimation {
-                    showSuccessToast = true
+                    // 显示成功提示
+                    withAnimation {
+                        showSuccessToast = true
+                    }
                 }
 
                 // 再次震动反馈

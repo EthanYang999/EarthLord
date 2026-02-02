@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Supabase
+import Auth
 
 struct CallsignSettingsSheet: View {
     @Environment(\.dismiss) private var dismiss
